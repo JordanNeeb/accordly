@@ -1,6 +1,6 @@
 # Accordly - Project Overview
 
-<!-- blueprint:source-hash 2790faf498a98e787165627d7678b5e63bb89cde2629de37b4c474b8ff37ce99 -->
+<!-- blueprint:source-hash 384445b75f67f55b0bda45abd4f087fa2f7ff40f4e06c42fc20d61cb73c7641f -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready message record, a calendar
@@ -21,9 +21,10 @@ the money.
   sharing children, often in high conflict. Each has their own account and
   subscription.
 - **Family** - one co-parent pair plus their shared children. A parent may
-  belong to several families (data model); the v1 UI limits a parent to one.
+  belong to several families (one per co-parent) from v1 and switches between
+  them in the UI. A family exists only once the invited co-parent accepts.
 - **Access states:**
-  - *Unpaired* - co-parent has not joined; not charged.
+  - *Unpaired* - no family yet (invite pending); not charged.
   - *Active subscriber* - full access.
   - *Lapsed* - can read everything, export PDFs, approve or deny the other
     parent's requests and expenses, and their debits keep running; cannot send
@@ -53,12 +54,12 @@ In build-plan order. Headline differentiators: **6-7** (permanent record),
 
 **Foundation**
 1. **Monorepo structure** - `apps/mobile` (this Expo app), new Next.js `apps/web`, shared packages; update `AGENTS.md`, coding standards, commands.
-2. **Supabase foundation** - local Supabase, staging in `ca-central-1`, profiles/families/children schema with RLS.
+2. **Supabase foundation** - local Supabase, staging in `ca-central-1`, profiles, families, and family membership with RLS.
 3. **Web authentication** - sign up, sign in, sign out, profile.
 4. **Bilingual foundation** - shared EN/FR translations and language preference on web.
 
 **Families**
-5. **Family pairing** - create family, invite co-parent by email, join, add children.
+5. **Family pairing** - invite co-parent by email; family created on acceptance; duplicate pairings blocked; add children.
 
 **Messaging**
 6. **Permanent messaging** - one undeletable, uneditable chat per family; server timestamps; attachments.
@@ -106,16 +107,19 @@ content (status transitions are new rows or narrowly scoped columns).
 
 ### families
 - `id`, `time_zone` (IANA text, e.g. `America/Toronto`), `created_at`
-- `status` (`'pending' | 'active'`) - active once both parents joined
+- created only when an invite is accepted, so it always has both parents (no status)
 
 ### family_members
 - `family_id` -> families, `user_id` -> profiles, `joined_at`
 - unique (`family_id`, `user_id`); exactly two parents per family in v1
-- a user may appear in many families (v1 UI shows one)
+- a user may appear in many families; one family per co-parent pair
 
 ### family_invites
-- `id`, `family_id`, `invited_email` (text), `invited_by` -> profiles
-- `status` (`'pending' | 'accepted' | 'expired'`), `created_at`
+- `id`, `invited_email` (text), `invited_by` -> profiles, `created_at`
+- `status` (`'pending' | 'accepted' | 'expired'`); no `family_id` until accepted
+- blocked when the two parents already share a family or have a pending invite
+  in either direction; accepting requires a verified email
+> TODO: where the family time zone is captured (invite or acceptance).
 
 ### children
 - `id`, `family_id`, `name` (text), `birthdate` (date)
@@ -243,4 +247,5 @@ content (status transitions are new rows or narrowly scoped columns).
 - **Receiving parent not onboarded to Stripe** - what happens when an expense is approved before the payee completes Connect onboarding?
 - **Sign-in method** (assumed email and password), workspace tooling, mobile styling, tone, light/dark mode, design folder path.
 - **Assumptions to confirm:** attachments, first-viewed receipts, hash chaining, children as name and birthdate only.
+- **Family time zone** - families are created on acceptance; the plan does not say which parent sets the time zone or when.
 - **Record retention** after account closure; expected launch scale; success criteria.

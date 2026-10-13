@@ -18,7 +18,7 @@ Do not renumber completed features; their archived specs refer to those IDs.
 
 ### Families
 
-- [ ] 5. **Family pairing** - create a family, invite the co-parent by email, join, and add children
+- [ ] 5. **Family pairing** - invite the co-parent by email, create the family when they accept, block duplicate pairings, and add children
 
 ### Messaging
 

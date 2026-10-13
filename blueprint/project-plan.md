@@ -47,11 +47,18 @@ and handle shared expenses, with three differentiators:
 
 - Sign up, sign in, profile. **TODO:** sign-in method (assumed email and
   password via Supabase Auth).
-- A parent creates a family and invites the co-parent by email; the family is
-  active once both have joined.
-- The data model supports a parent belonging to multiple families. **v1 UI
-  limits each parent to one family**; lifting the limit needs no data change.
-- Children: name and birthdate only in v1. **Assumption.**
+- Starting a family and inviting the co-parent by email is one step. The
+  family is created only when the co-parent accepts, so every family has both
+  parents from the start.
+- One co-parent pair is one family. An invite between two parents who already
+  share a family, or who already have a pending invite between them in either
+  direction, is blocked; the parent is pointed to the existing family or invite.
+- A parent can belong to multiple families from v1 (one per co-parent), and the
+  UI lets them switch between families.
+- Accepting an invite requires a verified email address, since invites are
+  matched by email.
+- Children: name and birthdate only in v1, added after the family exists.
+  **Assumption.**
 - English and French throughout: UI, emails, notifications, and PDF export.
 
 ### Messaging

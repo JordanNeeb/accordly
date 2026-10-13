@@ -1,8 +1,8 @@
 # Coding Standards
 
 > Conventions for this Expo (React Native) + TypeScript app using Expo Router.
-> Targets iOS, Android, and web via `react-native-web`. Review and adjust as the
-> project grows.
+> Targets iOS, Android, and web via `react-native-web`. Package manager: npm.
+> Commands live in `AGENTS.md`. Review and adjust as the project grows.
 
 ## TypeScript
 
@@ -91,6 +91,9 @@
 - Never trust a client-supplied user id for authorization; the server owns access control
 - Store secrets and tokens with `expo-secure-store`, never AsyncStorage or source code
 - Only `EXPO_PUBLIC_` env vars reach the app bundle, and anything in the bundle is public
+
+> TODO: backend, API client, auth provider, and server-state library are not
+> chosen yet. Record them here once the project plan settles them.
 
 ## Error Handling
 

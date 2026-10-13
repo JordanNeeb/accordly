@@ -13,7 +13,11 @@ for optional tool settings.
 
 ## What this is
 
-A description of your project and the problem it solves.
+Accordly Mobile, an Expo (React Native) app built with Expo Router and
+TypeScript, targeting iOS, Android, and web.
+
+> TODO: one-line product purpose. Fill in `blueprint/project-plan.md`, then run
+> `/overview`.
 
 This project is built with the **AI Blueprint**, a workflow layer, not an
 app skeleton. To start a new project, scaffold the app first in an empty folder
@@ -318,19 +322,25 @@ checks do not make the Blueprint unusable.
 
 ## Commands
 
-<!-- blueprint:onboarding-required -->
-For a standard Next.js project. Change or remove if you're using something else.
+Package manager: npm (`package-lock.json`). Expo SDK 57, React Native 0.86.
 
-- Dev server: `npm run dev` (http://localhost:3000)
-- Build: `npm run build`
-- Production server: `npm run start`
-- Lint: `npm run lint`
+- Dev server: `npm start` (Expo dev server / Metro; press `i`, `a`, or `w`)
+- iOS Simulator: `npm run ios`
+- Android Emulator: `npm run android`
+- Web: `npm run web`
+- Typecheck: `npx tsc --noEmit`
+- Lint: `npm run lint` (`expo lint`; no ESLint config exists yet, so the first
+  run offers to install `eslint` and `eslint-config-expo`)
+- Install native-compatible packages: `npx expo install <package>`
 
-Testing is opt-in. If this project does not already have a unit test runner, run
-`/tests` or `$tests` to add one and update this section with the real test
+There is no build script; native builds are produced by EAS or
+`npx expo run:ios` / `npx expo run:android` when needed.
+
+No test command is configured, so tests are not yet a gate. Run `/tests` or
+`$tests` to add a unit test runner and update this section with the real test
 commands.
 
-Browser testing is also opt-in. Run `/tests browser` or `$tests browser` to add
-or normalize a browser harness and document its exact command as `Browser
-tests`. Check and Continuous Mode can then reuse it without installing tooling
+End-to-end testing is also opt-in. Run `/tests browser` or `$tests browser` to
+add or normalize a harness (Maestro for native flows, Playwright for the web
+target) and document its exact command as `Browser tests`. Check and Continuous Mode can then reuse it without installing tooling
 mid-feature.

@@ -13,11 +13,21 @@ for optional tool settings.
 
 ## What this is
 
-Accordly Mobile, an Expo (React Native) app built with Expo Router and
-TypeScript, targeting iOS, Android, and web.
+Accordly, a Canadian bilingual co-parenting app: permanent court-ready
+messaging, a calendar that enforces the parents' agreement, and shared expenses
+and child support paid by Stripe pre-authorized debit. Product context lives in
+`blueprint/context/project-overview.md`.
 
-> TODO: one-line product purpose. Fill in `blueprint/project-plan.md`, then run
-> `/overview`.
+An npm workspaces monorepo:
+
+- `apps/web` - Next.js (App Router, TypeScript, Tailwind CSS), the full v1 client
+- `apps/mobile` - Expo (React Native, Expo Router), iOS and Android, built last
+- `packages/shared` - `@accordly/shared`, code shared by both apps
+- `supabase/` - Supabase config, migrations, and policies (backend)
+- `design/references/` - design screenshots, reference only
+
+The Blueprint files (`AGENTS.md`, `CLAUDE.md`, `.agents/`, `.claude/`,
+`blueprint/`) live at the root and apply to every app.
 
 This project is built with the **AI Blueprint**, a workflow layer, not an
 app skeleton. To start a new project, scaffold the app first in an empty folder
@@ -322,19 +332,39 @@ checks do not make the Blueprint unusable.
 
 ## Commands
 
-Package manager: npm (`package-lock.json`). Expo SDK 57, React Native 0.86.
+Package manager: npm workspaces, one root `package-lock.json`. Run commands from
+the repo root unless noted. Install dependencies into one workspace with
+`npm install <pkg> -w @accordly/web` (or `@accordly/mobile`, `@accordly/shared`).
 
-- Dev server: `npm start` (Expo dev server / Metro; press `i`, `a`, or `w`)
-- iOS Simulator: `npm run ios`
-- Android Emulator: `npm run android`
-- Web: `npm run web`
-- Typecheck: `npx tsc --noEmit`
-- Lint: `npm run lint` (`expo lint`; no ESLint config exists yet, so the first
-  run offers to install `eslint` and `eslint-config-expo`)
-- Install native-compatible packages: `npx expo install <package>`
+Root:
 
-There is no build script; native builds are produced by EAS or
-`npx expo run:ios` / `npx expo run:android` when needed.
+- Install: `npm install`
+- Typecheck all workspaces: `npm run typecheck`
+
+Web (`apps/web`):
+
+- Dev server: `npm run dev:web` (http://localhost:3000)
+- Build: `npm run build:web`
+- Lint: `npm run lint:web`
+
+Mobile (`apps/mobile`, Expo SDK 57, React Native 0.86):
+
+- Dev server: `npm run start:mobile` (Metro; press `i` or `a`)
+- iOS Simulator: `npm run ios` (requires Xcode)
+- Android Emulator: `npm run android` (requires Android Studio)
+- Bundle check without a device: `npx expo export --platform ios` (run in
+  `apps/mobile`)
+- Install native-compatible packages: `npx expo install <package>` (run in
+  `apps/mobile`)
+- Lint: not configured yet (`expo lint` offers to install ESLint on first run)
+- Native builds come from EAS or `npx expo run:ios` / `npx expo run:android`.
+
+Backend (`supabase/`):
+
+- Supabase CLI: use `npx supabase@latest <command>`; the Homebrew install on
+  this machine is v1 and outdated (upgrade with `brew upgrade supabase`).
+- Local stack: `npx supabase@latest start` (requires Docker running; first used
+  in feature 2)
 
 No test command is configured, so tests are not yet a gate. Run `/tests` or
 `$tests` to add a unit test runner and update this section with the real test
@@ -342,5 +372,5 @@ commands.
 
 End-to-end testing is also opt-in. Run `/tests browser` or `$tests browser` to
 add or normalize a harness (Maestro for native flows, Playwright for the web
-target) and document its exact command as `Browser tests`. Check and Continuous Mode can then reuse it without installing tooling
-mid-feature.
+target) and document its exact command as `Browser tests`. Check and
+Continuous Mode can then reuse it without installing tooling mid-feature.

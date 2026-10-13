@@ -1,31 +1,115 @@
 # Coding Standards
 
-> Conventions for this Expo (React Native) + TypeScript app using Expo Router.
-> Targets iOS, Android, and web via `react-native-web`. Package manager: npm.
-> Commands live in `AGENTS.md`. Review and adjust as the project grows.
+> Conventions for the Accordly monorepo: `apps/web` (Next.js), `apps/mobile`
+> (Expo), `packages/shared`, and `supabase/`. Shared rules apply everywhere;
+> app sections apply only inside that app. Commands live in `AGENTS.md`.
+
+# Shared
 
 ## TypeScript
 
-- Strict mode enabled (extends `expo/tsconfig.base`)
+- Strict mode in every workspace
 - No `any` types - use proper typing or `unknown`
 - Define types for all props, API responses, and data models
 - Use type inference where obvious, explicit types where helpful
-- Import from `src/` with the `@/` alias (`@/components/themed-text`), not long relative paths
-- Use `import { type X }` for type-only imports
+- Inside an app, import from its `src/` with the `@/` alias, not long relative paths
+- Use `import { type X }` or `import type` for type-only imports
+
+## Monorepo
+
+- npm workspaces: `@accordly/web`, `@accordly/mobile`, `@accordly/shared`
+- Code needed by both apps (types, validation, business rules such as allowance
+  math and expense splits, translations) goes in `packages/shared`. Keep it free
+  of React Native, Next.js, and DOM imports so both apps can consume it.
+- Don't move code into `packages/shared` until a second consumer exists or the
+  plan names it as shared.
+- One React version across the repo (currently pinned to mobile's `19.2.3`);
+  React Native breaks with duplicate copies. Check with `npm ls react` after
+  dependency changes.
+- Add dependencies to the workspace that uses them (`-w <workspace>`), never the root.
 
 ## React
 
 - Functional components only (no class components)
 - Use hooks for state and side effects
 - Keep components focused - one job per component
-- Extract reusable logic into custom hooks in `src/hooks/`
-- Prefer named exports; route files use the default export Expo Router requires
-- The React Compiler is enabled: don't add `useMemo`, `useCallback`, or `memo`
-  for routine memoization, and keep components and hooks pure so the compiler can
-  optimize them
+- Extract reusable logic into custom hooks
+- Prefer named exports, except where the framework requires a default export
+  (Next.js pages and layouts, Expo Router routes)
+
+## Naming
+
+- Files: kebab-case (`themed-text.tsx`, `use-theme.ts`); framework-reserved
+  names stay as required (`page.tsx`, `layout.tsx`, `_layout.tsx`)
+- Components: PascalCase
+- Hooks: camelCase with a `use` prefix
+- Functions: camelCase
+- Constants: SCREAMING_SNAKE_CASE for true constants; PascalCase objects for theme tokens
+- Types/Interfaces: PascalCase (no prefix)
+
+## Data, Security, and Errors
+
+- Parents may act against each other. Every family-owned record is scoped to
+  family membership and enforced in the database with row-level security, not
+  only in the UI.
+- Never trust a client-supplied user id or family id for authorization; derive
+  the actor from the authenticated Supabase session.
+- Messages, agreement versions, requests, payment history, and the activity log
+  are append-only: no edits or deletes of content.
+- Timestamps that matter for the record are set by the server, never the device.
+- Validate all external input (form data, route params, deep links, webhooks,
+  API responses) at the boundary.
+- Secrets never reach a client bundle. Only `NEXT_PUBLIC_` (web) and
+  `EXPO_PUBLIC_` (mobile) variables are public, and anything public is visible
+  to every user.
+- Every user-facing string exists in English and French.
+- Wrap async work in try/catch and show a user-friendly message, not a raw error.
+- Handle loading, empty, error, and offline states for anything that fetches data.
+
+> TODO: data-access pattern (Supabase client usage per app, validation library)
+> is decided in features 2-3. Record it here then.
+
+## Accessibility
+
+- Every interactive element has an accessible name when its purpose isn't clear
+  from visible text
+- Meaningful images and icons have labels; decorative ones are hidden from
+  assistive technology
+- Text respects the user's font size settings
+
+# Web (`apps/web`)
+
+## Next.js
+
+- Next.js 16 with the App Router. This version differs from older training
+  data: read the relevant guide in `apps/web/node_modules/next/dist/docs/` (or
+  `node_modules/next/dist/docs/` at the root when hoisted) before writing
+  Next.js code, as `apps/web/AGENTS.md` notes.
+- Server components by default; add `'use client'` only for interactivity,
+  hooks, or browser APIs
+- Stripe webhooks and other external callbacks use Route Handlers
+- `@accordly/shared` is compiled through `transpilePackages` in `next.config.ts`
+
+## Web file organization
+
+- Routes: `src/app/[route]/page.tsx`
+- Components: `src/components/[feature]/component-name.tsx`
+- Lib/Utils: `src/lib/[utility].ts`
+
+## Web styling
+
+- Tailwind CSS v4 for all styling (CSS-first config in `src/app/globals.css`)
+- Use Tailwind Plus components where one fits; colours, logo, and branding are
+  set by the project owner
+- No inline styles
+- Design screenshots live in `design/references/`; check them before building UI
+
+# Mobile (`apps/mobile`)
 
 ## React Native
 
+- The React Compiler is enabled: don't add `useMemo`, `useCallback`, or `memo`
+  for routine memoization, and keep components and hooks pure
 - Use React Native primitives (`View`, `Text`, `Pressable`), never DOM elements
 - All text must be inside a `Text` component
 - Use `Pressable` for touch targets, not the legacy `Touchable*` components
@@ -34,11 +118,11 @@
 - Respect safe areas with `react-native-safe-area-context`; don't hardcode notch or status bar offsets
 - Use `react-native-reanimated` for animations and `react-native-gesture-handler` for gestures
 - Prefer an Expo SDK module (`expo-*`) over a third-party native library when one exists;
-  install with `npx expo install` so versions match the SDK
-- Platform differences go in platform-specific files (`component.web.tsx`,
-  `component.ios.tsx`) when they diverge substantially; use `Platform.select` or
-  `Platform.OS` for small differences
-- Keep any feature working on iOS and Android; web support is best effort unless a spec says otherwise
+  install with `npx expo install` (in `apps/mobile`) so versions match the SDK
+- Platform differences go in platform-specific files (`component.ios.tsx`,
+  `component.android.tsx`) when they diverge substantially; use `Platform.select`
+  or `Platform.OS` for small differences
+- Targets iOS and Android; the web build is not a product target (web is `apps/web`)
 
 ## Expo Router
 
@@ -47,59 +131,39 @@
 - Typed routes are enabled: navigate with `Link` or `router` using typed hrefs, not string building
 - Read params with `useLocalSearchParams` and validate them before use; route params are untrusted strings
 - Deep links use the `accordlymobile://` scheme; any screen reachable by a link must handle missing or invalid params
+- Use an Expo Router `ErrorBoundary` export for screens that can fail to render
 
-## File Organization
+## Mobile file organization
 
 - Routes: `src/app/[route].tsx`, `src/app/[group]/_layout.tsx`
 - Components: `src/components/[feature]/component-name.tsx`
 - Shared UI primitives: `src/components/ui/`
 - Hooks: `src/hooks/use-thing.ts`
 - Constants and theme: `src/constants/`
-- Types: `src/types/[feature].ts`
-- Lib/Utils: `src/lib/[utility].ts`
 - Static assets: `assets/` (imported via `@/assets/*`)
 
-## Naming
+## Mobile styling
 
-- Files: kebab-case (`themed-text.tsx`, `use-theme.ts`)
-- Components: PascalCase (`ThemedText`)
-- Hooks: camelCase with a `use` prefix (`useTheme`)
-- Functions: camelCase
-- Constants: SCREAMING_SNAKE_CASE for true constants; PascalCase objects for theme tokens (`Colors`, `Fonts`)
-- Types/Interfaces: PascalCase (no prefix)
-
-## Styling
-
-- Use `StyleSheet.create` at the bottom of the component file
-- Pull colors from the theme (`useTheme()` and `Colors` in `src/constants/theme.ts`); never hardcode colors in components
+- Current code uses `StyleSheet.create` with theme tokens from
+  `src/constants/theme.ts` (`useTheme()`, `Colors`); never hardcode colors
 - Support both light and dark mode (`userInterfaceStyle: automatic`)
-- Use the shared themed components (`ThemedText`, `ThemedView`) before creating new primitives
-- Inline style objects only for values computed at render time (theme colors, dynamic sizes)
-- Use spacing and font tokens from `src/constants/theme.ts` rather than magic numbers when a token exists
-
-## Accessibility
-
-- Every interactive element has an `accessibilityRole` and an `accessibilityLabel` when its purpose isn't clear from visible text
 - Touch targets are at least 44x44 points (use `hitSlop` for small icons)
-- Text respects the system font size; don't disable font scaling without a reason
-- Icon-only and image elements that convey meaning need labels; decorative ones are hidden from screen readers
 
-## Data and State
+> TODO: mobile styling library (NativeWind likely) is decided in the mobile phase.
 
-- Keep state local first; lift it or add a shared store only when a current requirement needs it
-- Validate all external input (API responses, route params, deep links, stored data) at the boundary
-- Never trust a client-supplied user id for authorization; the server owns access control
+## Mobile data
+
 - Store secrets and tokens with `expo-secure-store`, never AsyncStorage or source code
-- Only `EXPO_PUBLIC_` env vars reach the app bundle, and anything in the bundle is public
 
-> TODO: backend, API client, auth provider, and server-state library are not
-> chosen yet. Record them here once the project plan settles them.
+# Backend (`supabase/`)
 
-## Error Handling
-
-- Wrap async work in try/catch and surface a user-friendly message, not a raw error
-- Handle loading, empty, error, and offline states for any screen that fetches data
-- Use an Expo Router `ErrorBoundary` export for screens that can fail to render
+- Supabase in `ca-central-1`; local development through the Supabase CLI
+- Every schema change is a migration in `supabase/migrations/`, created with the
+  CLI; never edit the remote database by hand
+- Enable row-level security on every table, with policies scoped through family
+  membership
+- Append-only tables deny `UPDATE` and `DELETE` of content at the database level
+- Money is stored as integer cents (CAD)
 
 ## Testing
 
@@ -145,31 +209,31 @@ of the switch; the skills and `ai-interaction.md` only point back here.
 - Run them via the project's test command (see Commands in `AGENTS.md`), not a
   hardcoded tool name.
 
-Stack binding: use Jest with the `jest-expo` preset (Expo's supported setup),
+Stack binding: mobile uses Jest with the `jest-expo` preset (Expo's supported setup),
 `jest.mock()` for native modules and external services, and
 `jest.useFakeTimers()` for time-dependent logic. Use React Native Testing Library
-only if component tests are later added deliberately.
+only if component tests are later added deliberately. Web and `packages/shared`
+runners are chosen when `/tests` runs (TODO).
 
-## Device Verification
+## Device and Browser Verification
 
 For UI and integration behavior, prefer real evidence from a running app over
 reading the code and assuming it works.
 
-- Verify on the iOS Simulator or Android Emulator (`npm run ios` / `npm run android`).
+- Web: verify in a browser against `npm run dev:web`.
+- Mobile: verify on the iOS Simulator or Android Emulator (`npm run ios` / `npm run android`).
   Check both platforms when a change touches platform-specific code, gestures,
   safe areas, keyboards, or native modules.
-- The web target (`npm run web`) is useful for quick checks but does not prove
-  native behavior.
 - End-to-end automation is separately opt-in through `/tests browser`. For native
-  flows, prefer Maestro; Playwright only covers the web target. Document the exact
+  flows, prefer Maestro; use Playwright for `apps/web`. Document the exact
   command as `Browser tests` in `AGENTS.md`.
 - When `Browser tests` is declared, add focused coverage for stable behavioral
   done-whens when it is proportionate, and run the documented command during
   `/check`. Do not assume it proves visual fidelity or behavior on a platform it
   did not run on.
 - If no Browser tests command is declared, do not add a runner silently in the
-  middle of an unrelated feature. Use simulator screenshots, Metro and device
-  logs, `npx tsc --noEmit`, lint output, or manual evidence instead.
+  middle of an unrelated feature. Use browser or simulator screenshots, Metro and device
+  logs, `npm run typecheck`, build and lint output, or manual evidence instead.
 - Device evidence is especially important for flows that tap, type, scroll,
   navigate, handle the keyboard, request permissions, or depend on client-side state.
 

@@ -1,6 +1,6 @@
 # Accordly - Project Overview
 
-<!-- blueprint:source-hash 384445b75f67f55b0bda45abd4f087fa2f7ff40f4e06c42fc20d61cb73c7641f -->
+<!-- blueprint:source-hash 368484a1ed1265a05b7e27a1cc82e4876ddaf354302620182f50790cf1f799b8 -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready message record, a calendar
@@ -56,6 +56,8 @@ In build-plan order. Headline differentiators: **6-7** (permanent record),
 1. **Monorepo structure** - `apps/mobile` (this Expo app), new Next.js `apps/web`, shared packages; update `AGENTS.md`, coding standards, commands.
 2. **Supabase foundation** - local Supabase, staging in `ca-central-1`, profiles, families, and family membership with RLS.
 3. **Web authentication** - sign up, sign in, sign out, profile.
+   - 3a. **Email and password authentication** - email confirmation and password reset.
+   - 3b. **Google sign-in** - same profile as email sign-in.
 4. **Bilingual foundation** - shared EN/FR translations and language preference on web.
 
 **Families**
@@ -101,8 +103,9 @@ content (status transitions are new rows or narrowly scoped columns).
 
 ### profiles
 - `id` (uuid, = `auth.users.id`)
-- `display_name` (text)
-- `language` (`'en' | 'fr'`)
+- `first_name`, `last_name` (text, nullable) - added on the profile after sign-up;
+  required before sending an invite (feature 5)
+- `language` (`'en' | 'fr'`, default `en`) - set by the EN/FR toggle (feature 4)
 - `created_at`
 
 ### families
@@ -245,7 +248,7 @@ content (status transitions are new rows or narrowly scoped columns).
 - **Notification timing** - invites (5), booking notices (11), and failed-debit alerts (14) need email before item 18 builds notifications.
 - **Activity log** - in the data model but no build item owns it.
 - **Receiving parent not onboarded to Stripe** - what happens when an expense is approved before the payee completes Connect onboarding?
-- **Sign-in method** (assumed email and password), workspace tooling, mobile styling, tone, light/dark mode, design folder path.
+- **More sign-in providers** (Apple, Facebook) after Google; workspace tooling, mobile styling, tone, light/dark mode, design folder path.
 - **Assumptions to confirm:** attachments, first-viewed receipts, hash chaining, children as name and birthdate only.
 - **Family time zone** - families are created on acceptance; the plan does not say which parent sets the time zone or when.
 - **Record retention** after account closure; expected launch scale; success criteria.

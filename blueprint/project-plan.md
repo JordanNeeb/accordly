@@ -45,8 +45,12 @@ and handle shared expenses, with three differentiators:
 
 ### Accounts, families, and children
 
-- Sign up, sign in, profile. **TODO:** sign-in method (assumed email and
-  password via Supabase Auth).
+- Sign up, sign in, sign out, profile via Supabase Auth. Sign-in methods:
+  email and password (with email confirmation and password reset) and Google.
+  Other providers (Apple, Facebook) later.
+- Sign-up asks only for email and password. Parents add their first and last
+  name on their profile afterward; names are required before sending a
+  co-parent invite. Language is chosen with an EN/FR toggle, not a form field.
 - Starting a family and inviting the co-parent by email is one step. The
   family is created only when the co-parent accepts, so every family has both
   parents from the start.
@@ -165,7 +169,8 @@ and handle shared expenses, with three differentiators:
 
 Everything belongs to a family except the user's own profile and subscription.
 
-- **Users/profiles:** identity, language preference, subscription status.
+- **Users/profiles:** identity, first and last name, language preference,
+  subscription status.
 - **Families:** members (exactly two parents in v1), time zone.
 - **Children:** name, birthdate.
 - **Messages:** append-only; sender, server timestamp, body, attachments, hash

@@ -355,7 +355,10 @@ Root:
 
 Web (`apps/web`):
 
-- Dev server: `npm run dev:web` (http://localhost:3000)
+- First-time env: copy `apps/web/.env.example` to `apps/web/.env.local` and fill
+  `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from `npx supabase@latest status`
+- Dev server: `npm run dev:web` (http://localhost:3000; use `localhost`, not
+  `127.0.0.1`, so auth cookies and email links match the Supabase site URL)
 - Build: `npm run build:web`
 - Lint: `npm run lint:web`
 
@@ -381,6 +384,10 @@ Backend (`supabase/`):
 - New migration: `npx supabase@latest migration new <name>` (in
   `supabase/migrations/`; never edit one already pushed)
 - Lint the schema: `npx supabase@latest db lint`
+- Regenerate database types after a migration:
+  `npx supabase@latest gen types typescript --local > packages/shared/src/database.types.ts`
+- Auth emails (confirmation, reset) are caught locally by Mailpit at
+  http://127.0.0.1:54324
 - Link staging (once per checkout): `npx supabase@latest link --project-ref <ref>`
 - Push migrations to staging: `npx supabase@latest db push` (remote change;
   needs explicit approval each time)

@@ -38,6 +38,18 @@ because the directory isn't empty.
 
 The workflow is defined by the local skills and context files below.
 
+## Branches
+
+- `dev` is the default and integration branch (also the GitHub default). Create
+  every feature, fix, and rollback branch from `dev`; `/complete` squash-merges
+  back into `dev`. Wherever a skill says "default branch", it means `dev`.
+- `main` is production: pushing it deploys. Never commit directly to `main`.
+  Update it only when the user explicitly asks, after they have tested `dev`,
+  by fast-forwarding it (`git switch main && git merge --ff-only dev`). Pushing
+  `main` needs its own separate yes.
+- Hosting (set up in `/release`) deploys production from `main`, regardless of
+  the GitHub default branch.
+
 ## Proportional engineering
 
 Build for established requirements, not hypothetical scale, threats, or future

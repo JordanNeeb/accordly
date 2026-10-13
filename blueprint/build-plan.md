@@ -12,7 +12,7 @@ Do not renumber completed features; their archived specs refer to those IDs.
 ### Foundation
 
 - [x] 1. **Monorepo structure** - move the Expo app to `apps/mobile`, add a Next.js `apps/web`, shared packages, and update `AGENTS.md`, coding standards, and commands
-- [ ] 2. **Supabase foundation** - local Supabase, staging project in `ca-central-1`, base schema for profiles, families, and children with row-level security
+- [x] 2. **Supabase foundation** - local Supabase, staging project in `ca-central-1`, base schema for profiles, families, and family membership with row-level security
 - [ ] 3. **Web authentication** - sign up, sign in, sign out, and profile on web via Supabase Auth
 - [ ] 4. **Bilingual foundation** - shared English and French translations with a language preference, wired into web
 

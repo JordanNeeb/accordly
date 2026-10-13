@@ -363,8 +363,16 @@ Backend (`supabase/`):
 
 - Supabase CLI: use `npx supabase@latest <command>`; the Homebrew install on
   this machine is v1 and outdated (upgrade with `brew upgrade supabase`).
-- Local stack: `npx supabase@latest start` (requires Docker running; first used
-  in feature 2)
+- Local stack: `npx supabase@latest start` / `stop` / `status` (requires Docker
+  running; Studio at http://127.0.0.1:54323, Mailpit at http://127.0.0.1:54324)
+- Rebuild the local database from migrations: `npx supabase@latest db reset`
+- New migration: `npx supabase@latest migration new <name>` (in
+  `supabase/migrations/`; never edit one already pushed)
+- Lint the schema: `npx supabase@latest db lint`
+- Link staging (once per checkout): `npx supabase@latest link --project-ref <ref>`
+- Push migrations to staging: `npx supabase@latest db push` (remote change;
+  needs explicit approval each time)
+- Compare local and remote migrations: `npx supabase@latest migration list`
 
 No test command is configured, so tests are not yet a gate. Run `/tests` or
 `$tests` to add a unit test runner and update this section with the real test

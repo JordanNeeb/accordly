@@ -1,7 +1,7 @@
 // Every English auth string lives here so feature 4 can swap in EN/FR
 // translations without touching the forms.
 export const AuthMessages = {
-  appName: "Accordly",
+  appName: "Tango",
   fields: {
     firstName: "First name",
     lastName: "Last name",
@@ -15,7 +15,7 @@ export const AuthMessages = {
     submit: "Sign in",
     submitting: "Signing in…",
     forgotPassword: "Forgot password?",
-    noAccount: "New to Accordly?",
+    noAccount: "New to Tango?",
     createAccount: "Create an account",
     resend: "Resend confirmation email",
     resending: "Sending…",
@@ -36,7 +36,8 @@ export const AuthMessages = {
   },
   forgotPassword: {
     title: "Reset your password",
-    description: "Enter your email and we'll send you a link to reset your password.",
+    description:
+      "Enter your email and we'll send you a link to reset your password.",
     submit: "Send reset link",
     submitting: "Sending…",
     sent: "If an account exists for that email, we've sent a link to reset your password.",
@@ -49,7 +50,8 @@ export const AuthMessages = {
   },
   profile: {
     title: "Profile",
-    description: "Your name is shown to your co-parent and in exported records.",
+    description:
+      "Your name is shown to your co-parent and in exported records.",
     completePrompt:
       "Add your first and last name. Your co-parent will see them on invites, messages, and exported records.",
     emailHint: "The email you sign in with.",

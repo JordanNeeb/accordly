@@ -10,7 +10,7 @@ coordinating parenting time, often while in conflict. Informal tools (texts,
 email, shared calendars, e-Transfers) leave no reliable record, are easy to
 dispute, and do nothing to hold either parent to what they agreed.
 
-Accordly is a Canadian co-parenting app and a direct competitor to
+Tango is a Canadian co-parenting app and a direct competitor to
 OurFamilyWizard. It gives co-parents one place to communicate, plan schedules,
 and handle shared expenses, with three differentiators:
 
@@ -123,7 +123,7 @@ and handle shared expenses, with three differentiators:
   parent's share, paid to the logging parent.
 - If the paying parent has no debit mandate, the expense is marked approved but
   unpaid and they are prompted to set one up.
-- Either parent can record an expense as paid outside Accordly (cash,
+- Either parent can record an expense as paid outside Tango (cash,
   e-Transfer).
 - Payment status is always visible: pending, paid, failed, disputed. Failed
   debits notify both parents.

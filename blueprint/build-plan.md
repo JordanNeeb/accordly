@@ -36,7 +36,7 @@ Do not renumber completed features; their archived specs refer to those IDs.
 
 ### Expenses and payments
 
-- [ ] 12. **Expenses** - log with receipt, agreement split, approve or reject, and record settled outside Accordly
+- [ ] 12. **Expenses** - log with receipt, agreement split, approve or reject, and record settled outside Tango
 - [ ] 13. **Stripe onboarding** - Connect accounts for receiving parents and pre-authorized debit mandates for payers
 - [ ] 14. **Expense payments** - approval triggers a debit, with webhook-driven pending, paid, failed, and disputed status
 - [ ] 15. **Recurring child support** - mutually accepted schedule with automatic recurring debits

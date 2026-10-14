@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "accordly-mobile",
-    "slug": "accordly-mobile",
+    "name": "tango-mobile",
+    "slug": "tango-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "accordlymobile",
+    "scheme": "tangomobile",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"

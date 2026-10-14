@@ -1,17 +1,17 @@
 {
-  "name": "accordly",
+  "name": "tango",
   "private": true,
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev:web": "npm run dev -w @accordly/web",
-    "build:web": "npm run build -w @accordly/web",
-    "lint:web": "npm run lint -w @accordly/web",
-    "start:mobile": "npm run start -w @accordly/mobile",
-    "ios": "npm run ios -w @accordly/mobile",
-    "android": "npm run android -w @accordly/mobile",
+    "dev:web": "npm run dev -w @tango/web",
+    "build:web": "npm run build -w @tango/web",
+    "lint:web": "npm run lint -w @tango/web",
+    "start:mobile": "npm run start -w @tango/mobile",
+    "ios": "npm run ios -w @tango/mobile",
+    "android": "npm run android -w @tango/mobile",
     "typecheck": "npm run typecheck --workspaces --if-present"
   }
 }

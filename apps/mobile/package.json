@@ -1,9 +1,9 @@
 {
-  "name": "@accordly/mobile",
+  "name": "@tango/mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
-    "@accordly/shared": "*",
+    "@tango/shared": "*",
     "@expo/ui": "~57.0.23",
     "expo": "~57.0.28",
     "expo-constants": "~57.0.21",

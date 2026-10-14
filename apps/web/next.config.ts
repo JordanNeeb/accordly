@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@accordly/shared"],
+  transpilePackages: ["@tango/shared"],
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

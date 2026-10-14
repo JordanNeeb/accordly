@@ -2,7 +2,7 @@ import { Momo_Signature } from "next/font/google";
 
 import { AuthMessages } from "@/lib/auth/messages";
 
-// The "Accordly" wordmark stands in for a logo until branding exists. Momo
+// The "Tango" wordmark stands in for a logo until branding exists. Momo
 // Signature is loaded here and used nowhere else.
 const momoSignature = Momo_Signature({ subsets: ["latin"], weight: "400" });
 

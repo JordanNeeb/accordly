@@ -1,4 +1,4 @@
-# Accordly
+# Tango
 
 A Canadian, bilingual co-parenting app: permanent court-ready messaging, a
 calendar that enforces the parents' agreement, and shared expenses and child
@@ -10,7 +10,7 @@ support paid by Stripe pre-authorized debit.
 |---|---|
 | `apps/web` | Next.js web app (App Router, TypeScript, Tailwind CSS) |
 | `apps/mobile` | Expo app for iOS and Android (React Native, Expo Router) |
-| `packages/shared` | `@accordly/shared`, code shared by both apps |
+| `packages/shared` | `@tango/shared`, code shared by both apps |
 | `supabase/` | Supabase config, migrations, and policies |
 | `design/references/` | Design screenshots (reference only) |
 | `blueprint/` | Plans, project overview, coding standards, and feature history |

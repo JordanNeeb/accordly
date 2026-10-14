@@ -13,7 +13,7 @@ for optional tool settings.
 
 ## What this is
 
-Accordly, a Canadian bilingual co-parenting app: permanent court-ready
+Tango, a Canadian bilingual co-parenting app: permanent court-ready
 messaging, a calendar that enforces the parents' agreement, and shared expenses
 and child support paid by Stripe pre-authorized debit. Product context lives in
 `blueprint/context/project-overview.md`.
@@ -22,7 +22,7 @@ An npm workspaces monorepo:
 
 - `apps/web` - Next.js (App Router, TypeScript, Tailwind CSS), the full v1 client
 - `apps/mobile` - Expo (React Native, Expo Router), iOS and Android, built last
-- `packages/shared` - `@accordly/shared`, code shared by both apps
+- `packages/shared` - `@tango/shared`, code shared by both apps
 - `supabase/` - Supabase config, migrations, and policies (backend)
 - `design/references/` - design screenshots, reference only
 
@@ -346,7 +346,7 @@ checks do not make the Blueprint unusable.
 
 Package manager: npm workspaces, one root `package-lock.json`. Run commands from
 the repo root unless noted. Install dependencies into one workspace with
-`npm install <pkg> -w @accordly/web` (or `@accordly/mobile`, `@accordly/shared`).
+`npm install <pkg> -w @tango/web` (or `@tango/mobile`, `@tango/shared`).
 
 Root:
 

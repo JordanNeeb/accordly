@@ -1,6 +1,6 @@
-# Accordly - Project Overview
+# Tango - Project Overview
 
-<!-- blueprint:source-hash 368484a1ed1265a05b7e27a1cc82e4876ddaf354302620182f50790cf1f799b8 -->
+<!-- blueprint:source-hash 79109a898c74be441c156ea89397b17ee31b37432247c633ae93f1d9d3cc2c6f -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready message record, a calendar
@@ -11,7 +11,7 @@
 
 Separated parents coordinate messages, money, and parenting time through texts,
 email, and e-Transfers that leave no reliable record and hold no one to what was
-agreed. Accordly, a direct competitor to OurFamilyWizard, makes the record
+agreed. Tango, a direct competitor to OurFamilyWizard, makes the record
 permanent and court-ready, enforces agreed calendar terms, and actually moves
 the money.
 
@@ -74,7 +74,7 @@ In build-plan order. Headline differentiators: **6-7** (permanent record),
 11. **Calendar enforcement** - overnight allowance tracking, bookings, approve/deny requests and swaps.
 
 **Expenses and payments**
-12. **Expenses** - receipt, agreement split, approve/reject, settled-outside-Accordly.
+12. **Expenses** - receipt, agreement split, approve/reject, settled-outside-Tango.
 13. **Stripe onboarding** - Connect accounts for receivers, ACSS PAD mandates for payers.
 14. **Expense payments** - approval triggers debit; webhook-driven status.
 15. **Recurring child support** - mutually accepted schedule with automatic debits.
@@ -169,7 +169,7 @@ content (status transitions are new rows or narrowly scoped columns).
   `incurred_on` (date), `description`, `receipt_path` (required)
 - `split` (jsonb: percent per parent, default from agreement)
 - `status` (`'submitted' | 'approved' | 'rejected'`), `decided_at`, `reject_reason`
-- `settlement` (`'unpaid' | 'stripe' | 'outside_accordly'`)
+- `settlement` (`'unpaid' | 'stripe' | 'outside_tango'`)
 
 ### stripe_accounts
 - `user_id`, `stripe_account_id` (Connect Express), `onboarding_status`

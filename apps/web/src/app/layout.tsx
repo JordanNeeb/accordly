@@ -1,4 +1,4 @@
-import type { Language } from "@accordly/shared";
+import type { Language } from "@tango/shared";
 import type { Metadata } from "next";
 import { Google_Sans, Google_Sans_Code } from "next/font/google";
 import "./globals.css";
@@ -14,7 +14,7 @@ const googleSansCode = Google_Sans_Code({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Accordly", template: "%s | Accordly" },
+  title: { default: "Tango", template: "%s | Tango" },
 };
 
 const lang: Language = "en";

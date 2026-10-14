@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { signOut } from "@/app/(auth)/actions";
 import { SubmitButton } from "@/components/auth/fields";
 import { textButtonClass } from "@/components/auth/styles";
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/common/logo";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { AuthMessages } from "@/lib/auth/messages";
 import { createClient } from "@/lib/supabase/server";

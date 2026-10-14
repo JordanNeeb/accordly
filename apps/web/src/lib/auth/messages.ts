@@ -1,7 +1,6 @@
 // Every English auth string lives here so feature 4 can swap in EN/FR
 // translations without touching the forms.
 export const AuthMessages = {
-  appName: "Tango",
   fields: {
     firstName: "First name",
     lastName: "Last name",

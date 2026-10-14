@@ -109,6 +109,7 @@ Web data access (`apps/web`):
 
 - Routes: `src/app/[route]/page.tsx`
 - Components: `src/components/[feature]/component-name.tsx`
+- Shared components used across features: `src/components/common/component-name.tsx`
 - Lib/Utils: `src/lib/[utility].ts`
 
 ## Web styling
@@ -152,6 +153,7 @@ Web data access (`apps/web`):
 
 - Routes: `src/app/[route].tsx`, `src/app/[group]/_layout.tsx`
 - Components: `src/components/[feature]/component-name.tsx`
+- Shared components used across features: `src/components/common/component-name.tsx`
 - Shared UI primitives: `src/components/ui/`
 - Hooks: `src/hooks/use-thing.ts`
 - Constants and theme: `src/constants/`

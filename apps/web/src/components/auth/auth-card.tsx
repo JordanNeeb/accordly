@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/common/logo";
 
 // Card layout from the Tailwind Plus sign-in component. The logo images are
 // replaced by a text wordmark until branding exists. Below `sm` the card has no

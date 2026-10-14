@@ -3,7 +3,8 @@ import { type ReactNode } from "react";
 import { AuthMessages } from "@/lib/auth/messages";
 
 // Card layout from the Tailwind Plus sign-in component. The logo images are
-// replaced by a text wordmark until branding exists.
+// replaced by a text wordmark until branding exists. Below `sm` the card has no
+// panel, so the full-width form sits on the page background.
 export function AuthCard({
   title,
   children,
@@ -25,7 +26,7 @@ export function AuthCard({
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div className="bg-white px-6 py-12 shadow-sm sm:rounded-lg sm:px-12 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
+        <div className="px-6 py-12 sm:rounded-lg sm:bg-white sm:px-12 sm:shadow-sm sm:dark:bg-gray-800/50 sm:dark:shadow-none sm:dark:outline sm:dark:-outline-offset-1 sm:dark:outline-white/10">
           {children}
         </div>
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { type AuthError } from "@supabase/supabase-js";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { AuthMessages } from "@/lib/auth/messages";
@@ -93,6 +94,27 @@ export async function signIn(
   }
 
   redirect("/profile");
+}
+
+// Starts Google's OAuth flow (PKCE; the code verifier is stored in a cookie).
+// Google returns to /auth/callback on this origin; Supabase's redirect
+// allow-list still applies, and nothing from the form shapes the URL.
+export async function signInWithGoogle(): Promise<ActionResult> {
+  const origin = (await headers()).get("origin");
+  if (!origin) return { formError: AuthMessages.errors.googleFailed };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${origin}/auth/callback` },
+  });
+
+  if (error || !data.url) {
+    if (error) unexpected("signInWithGoogle", error);
+    return { formError: AuthMessages.errors.googleFailed };
+  }
+
+  redirect(data.url);
 }
 
 export async function resendConfirmation(

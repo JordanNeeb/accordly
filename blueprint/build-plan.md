@@ -13,9 +13,9 @@ Do not renumber completed features; their archived specs refer to those IDs.
 
 - [x] 1. **Monorepo structure** - move the Expo app to `apps/mobile`, add a Next.js `apps/web`, shared packages, and update `AGENTS.md`, coding standards, and commands
 - [x] 2. **Supabase foundation** - local Supabase, staging project in `ca-central-1`, base schema for profiles, families, and family membership with row-level security
-- [ ] 3. **Web authentication** - sign up, sign in, sign out, and profile on web via Supabase Auth
+- [x] 3. **Web authentication** - sign up, sign in, sign out, and profile on web via Supabase Auth
   - [x] 3a. **Email and password authentication** - sign up with email confirmation, sign in, sign out, forgot password, and profile
-  - [ ] 3b. **Google sign-in** - sign up and sign in with Google, linked to the same profile
+  - [x] 3b. **Google sign-in** - sign up and sign in with Google, linked to the same profile
 - [ ] 4. **Bilingual foundation** - shared English and French translations with a language preference, wired into web
 
 ### Families

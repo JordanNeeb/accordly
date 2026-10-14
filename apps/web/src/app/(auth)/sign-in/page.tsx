@@ -12,10 +12,16 @@ export const metadata: Metadata = { title: AuthMessages.signIn.submit };
 
 // Only a known error code from the URL maps to a message; the URL never
 // supplies text.
+const URL_ERRORS: Record<string, string> = {
+  "link-invalid": AuthMessages.errors.linkInvalid,
+  "google-failed": AuthMessages.errors.googleFailed,
+};
+
 async function LinkNotice({ searchParams }: PageProps<"/sign-in">) {
   const { error } = await searchParams;
-  if (error !== "link-invalid") return null;
-  return <FormAlert error={AuthMessages.errors.linkInvalid} />;
+  const message = typeof error === "string" ? URL_ERRORS[error] : undefined;
+  if (!message) return null;
+  return <FormAlert error={message} />;
 }
 
 export default function SignInPage(props: PageProps<"/sign-in">) {

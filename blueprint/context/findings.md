@@ -62,3 +62,11 @@
 **Why it matters:** `needsName` combines the current action notice with the initial server props. After a first successful save, the props still hold the empty names, so any later submission that returns a field or form error shows "Add your first and last name" again even though both names are saved.
 **Suggested fix:** Track saved names from the last successful result (for example `state.values` when `state.notice === saved`), or call `revalidatePath('/profile')` / `refresh()` after a successful update so the props reflect the database. No current requirement is lost.
 **Resolution:**
+
+### F-08 [P2] open - Sign-in error lookup crashes on Object.prototype keys
+
+**File:** apps/web/src/app/(auth)/sign-in/page.tsx:22
+**Found:** 2026-10-14 by /audit independent (scope: current; lens: security, quality)
+**Why it matters:** This feature replaced the safe `error !== "link-invalid"` check with a plain-object lookup `URL_ERRORS[error]`. `/sign-in?error=constructor` (or `toString`, `__proto__`) returns a function or object, which is truthy and is passed as the `error` prop to the client `FormAlert`. Confirmed against the dev server: the response carries "Functions cannot be passed directly to Client Components" with an error digest, so the signed-out sign-in page fails to render for anyone following such a link. No text injection is possible. It is the same defect class as F-03, newly introduced on an unauthenticated page.
+**Suggested fix:** Guard the lookup with `Object.hasOwn(URL_ERRORS, error)` (or use a `Map`). No current requirement is lost.
+**Resolution:**

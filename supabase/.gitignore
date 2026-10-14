@@ -6,3 +6,6 @@
 .env.keys
 .env.local
 .env.*.local
+
+# Local secrets read by config.toml env() (OAuth client secrets)
+.env

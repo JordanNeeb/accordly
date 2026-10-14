@@ -8,6 +8,7 @@ import { AuthMessages } from "@/lib/auth/messages";
 import { type ActionResult } from "@/lib/auth/validation";
 
 import { FormAlert, SubmitButton, TextField } from "./fields";
+import { GoogleSignInButton } from "./google-sign-in-button";
 import { linkClass, textButtonClass } from "./styles";
 import { useFocusFirstError } from "./use-focus-first-error";
 
@@ -68,6 +69,8 @@ export function SignInForm() {
         </form>
       ) : null}
       <FormAlert error={resendState.formError} notice={resendState.notice} />
+
+      <GoogleSignInButton />
     </div>
   );
 }

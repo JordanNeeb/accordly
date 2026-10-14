@@ -23,3 +23,6 @@ export const linkClass =
 export const errorTextClass = "mt-2 text-sm text-red-600 dark:text-red-400";
 
 export const hintTextClass = "mt-2 text-sm text-gray-500 dark:text-gray-400";
+
+export const socialButtonClass =
+  "flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:inset-ring-transparent disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20";

@@ -388,6 +388,11 @@ Backend (`supabase/`):
   `npx supabase@latest gen types typescript --local > packages/shared/src/database.types.ts`
 - Auth emails (confirmation, reset) are caught locally by Mailpit at
   http://127.0.0.1:54324
+- Google sign-in (local): create a Google Cloud OAuth client (type "Web
+  application") with the authorized redirect URI
+  `http://127.0.0.1:54321/auth/v1/callback`, copy `supabase/.env.example` to
+  `supabase/.env` (git-ignored), fill in the client ID and secret, then restart
+  the stack (`npx supabase@latest stop` and `start`)
 - Link staging (once per checkout): `npx supabase@latest link --project-ref <ref>`
 - Push migrations to staging: `npx supabase@latest db push` (remote change;
   needs explicit approval each time)

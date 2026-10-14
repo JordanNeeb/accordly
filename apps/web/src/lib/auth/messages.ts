@@ -29,6 +29,11 @@ export const AuthMessages = {
     checkEmail:
       "Check your email for a link to confirm your account. Then sign in.",
   },
+  google: {
+    divider: "Or continue with",
+    continue: "Continue with Google",
+    redirecting: "Redirecting to Google…",
+  },
   forgotPassword: {
     title: "Reset your password",
     description: "Enter your email and we'll send you a link to reset your password.",
@@ -74,6 +79,7 @@ export const AuthMessages = {
     linkInvalid: "That link is invalid or has expired. Request a new one.",
     sessionExpired: "Your reset link has expired. Request a new one.",
     signedOut: "Your session has ended. Sign in again.",
+    googleFailed: "Google sign-in didn't complete. Try again.",
     unexpected: "Something went wrong. Please try again.",
   },
 } as const;

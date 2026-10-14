@@ -13,6 +13,7 @@ support paid by Stripe pre-authorized debit.
 | `packages/shared` | `@tango/shared`, code shared by both apps |
 | `supabase/` | Supabase config, migrations, and policies |
 | `design/references/` | Design screenshots (reference only) |
+| `design/brand/` | Brand source artwork (logos, icon art) |
 | `blueprint/` | Plans, project overview, coding standards, and feature history |
 
 ## Getting started

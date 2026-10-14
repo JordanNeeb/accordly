@@ -25,6 +25,7 @@ An npm workspaces monorepo:
 - `packages/shared` - `@tango/shared`, code shared by both apps
 - `supabase/` - Supabase config, migrations, and policies (backend)
 - `design/references/` - design screenshots, reference only
+- `design/brand/` - brand source artwork (logos, icon art)
 
 The Blueprint files (`AGENTS.md`, `CLAUDE.md`, `.agents/`, `.claude/`,
 `blueprint/`) live at the root and apply to every app.

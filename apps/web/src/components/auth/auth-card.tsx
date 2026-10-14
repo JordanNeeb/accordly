@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-import { AuthMessages } from "@/lib/auth/messages";
+import { Logo } from "@/components/logo";
 
 // Card layout from the Tailwind Plus sign-in component. The logo images are
 // replaced by a text wordmark until branding exists. Below `sm` the card has no
@@ -17,9 +17,7 @@ export function AuthCard({
   return (
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <p className="text-center text-xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
-          {AuthMessages.appName}
-        </p>
+        <Logo className="text-center" />
         <h1 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-white">
           {title}
         </h1>
@@ -55,9 +53,7 @@ export function AuthSimple({
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <p className="text-center text-xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
-          {AuthMessages.appName}
-        </p>
+        <Logo className="text-center" />
         <h1 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-white">
           {title}
         </h1>

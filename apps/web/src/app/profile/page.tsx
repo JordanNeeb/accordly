@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { signOut } from "@/app/(auth)/actions";
 import { SubmitButton } from "@/components/auth/fields";
 import { textButtonClass } from "@/components/auth/styles";
+import { Logo } from "@/components/logo";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { AuthMessages } from "@/lib/auth/messages";
 import { createClient } from "@/lib/supabase/server";
@@ -53,9 +54,7 @@ export default function ProfilePage(props: PageProps<"/profile">) {
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-12">
       <div className="mb-10 flex items-center justify-between">
-        <p className="text-xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
-          {AuthMessages.appName}
-        </p>
+        <Logo />
         <form action={signOut}>
           <SubmitButton
             label={AuthMessages.profile.signOut}

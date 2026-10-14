@@ -19,7 +19,10 @@ const URL_ERRORS: Record<string, string> = {
 
 async function LinkNotice({ searchParams }: PageProps<"/sign-in">) {
   const { error } = await searchParams;
-  const message = typeof error === "string" ? URL_ERRORS[error] : undefined;
+  const message =
+    typeof error === "string" && Object.hasOwn(URL_ERRORS, error)
+      ? URL_ERRORS[error]
+      : undefined;
   if (!message) return null;
   return <FormAlert error={message} />;
 }

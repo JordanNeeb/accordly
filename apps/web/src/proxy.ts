@@ -3,11 +3,12 @@ import { type NextRequest, NextResponse } from "next/server";
 
 // Signed-out visitors to these pages go to the paired page.
 const SIGNED_IN_ONLY: Record<string, string> = {
+  "/dashboard": "/sign-in",
   "/profile": "/sign-in",
   "/reset-password": "/forgot-password",
 };
-// Signed-in visitors to these pages go to their profile.
-const SIGNED_OUT_ONLY = ["/sign-in", "/sign-up"];
+// Signed-in visitors to these pages go to their dashboard.
+const SIGNED_OUT_ONLY = ["/", "/sign-in", "/sign-up"];
 
 // Refreshes the Supabase session cookie on every page request and routes
 // visitors by session state. Pages still verify the session themselves; this
@@ -45,7 +46,7 @@ export async function proxy(request: NextRequest) {
 
   const target = signedIn
     ? SIGNED_OUT_ONLY.includes(pathname)
-      ? "/profile"
+      ? "/dashboard"
       : undefined
     : SIGNED_IN_ONLY[pathname];
 

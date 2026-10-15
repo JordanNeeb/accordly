@@ -1,5 +1,5 @@
 // Class strings ported from the Tailwind Plus auth components
-// (design/references/tailwind-plus/auth/). Error variants are additions.
+// (design/references/tailwind-plus/application/). Error variants are additions.
 export const labelClass = "block text-sm/6 font-medium text-gray-900 dark:text-white";
 
 export const inputClass =

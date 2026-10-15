@@ -12,12 +12,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: AuthMessages.profile.title };
 
-// Known notice codes only; the URL never supplies text.
-const NOTICES: Record<string, string> = {
-  "password-updated": AuthMessages.notices.passwordUpdated,
-};
-
-async function Profile({ searchParams }: PageProps<"/profile">) {
+async function Profile() {
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
   const claims = claimsData?.claims;
@@ -38,19 +33,16 @@ async function Profile({ searchParams }: PageProps<"/profile">) {
     );
   }
 
-  const { notice } = await searchParams;
-
   return (
     <ProfileForm
       email={claims.email ?? ""}
       firstName={profile.first_name ?? ""}
       lastName={profile.last_name ?? ""}
-      notice={typeof notice === "string" ? NOTICES[notice] : undefined}
     />
   );
 }
 
-export default function ProfilePage(props: PageProps<"/profile">) {
+export default function ProfilePage() {
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-12">
       <div className="mb-10 flex items-center justify-between">
@@ -70,7 +62,7 @@ export default function ProfilePage(props: PageProps<"/profile">) {
           </p>
         }
       >
-        <Profile {...props} />
+        <Profile />
       </Suspense>
     </main>
   );

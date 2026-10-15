@@ -228,6 +228,8 @@ Records are never hard-deleted. Account closure and legal retention rules are a
 
 - Design is owned by the project owner. Components come from Tailwind Plus on
   web; colours, logo, and branding are set manually.
+- A public landing page at `/` for signed-out visitors, aimed at parents going
+  through a high-conflict separation; signed-in visitors go to the dashboard.
 - Screenshots for reference live in `design/references/` (reference only, never
   shipped). **TODO:** confirm the path.
 - **TODO:** tone, light/dark mode, mobile component library.

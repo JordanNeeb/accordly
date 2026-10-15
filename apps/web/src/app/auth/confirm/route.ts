@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 // Where each email link lands after it is verified. The destination is fixed
 // per link type, never taken from the URL, so this can't be an open redirect.
 const DESTINATIONS: Partial<Record<EmailOtpType, string>> = {
-  email: "/profile",
+  email: "/dashboard",
   recovery: "/reset-password",
 };
 

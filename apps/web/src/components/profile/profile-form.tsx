@@ -18,14 +18,11 @@ type ProfileFormProps = {
   email: string;
   firstName: string;
   lastName: string;
-  notice?: string;
 };
 
 // Layout from the Tailwind Plus settings form, trimmed to the profile fields.
-export function ProfileForm({ email, firstName, lastName, notice }: ProfileFormProps) {
-  const [state, formAction] = useActionState<ActionResult, FormData>(updateProfile, {
-    notice,
-  });
+export function ProfileForm({ email, firstName, lastName }: ProfileFormProps) {
+  const [state, formAction] = useActionState<ActionResult, FormData>(updateProfile, {});
   const formRef = useRef<HTMLFormElement>(null);
   useFocusFirstError(formRef, state);
 

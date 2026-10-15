@@ -93,7 +93,7 @@ export async function signIn(
     return { ...unexpected("signIn", error), values };
   }
 
-  redirect("/profile");
+  redirect("/dashboard");
 }
 
 // Starts Google's OAuth flow (PKCE; the code verifier is stored in a cookie).
@@ -183,7 +183,12 @@ export async function updatePassword(
     return unexpected("updatePassword", error);
   }
 
-  redirect("/profile?notice=password-updated");
+  // The parent signs in again with the new password. A failed sign-out is
+  // logged but doesn't block: the password has already changed, and the proxy
+  // sends a still-signed-in parent from /sign-in on to /dashboard.
+  const { error: signOutError } = await supabase.auth.signOut();
+  if (signOutError) unexpected("updatePassword signOut", signOutError);
+  redirect("/sign-in?notice=password-updated");
 }
 
 export async function signOut(): Promise<void> {

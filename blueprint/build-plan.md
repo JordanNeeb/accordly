@@ -17,6 +17,7 @@ Do not renumber completed features; their archived specs refer to those IDs.
   - [x] 3a. **Email and password authentication** - sign up with email confirmation, sign in, sign out, forgot password, and profile
   - [x] 3b. **Google sign-in** - sign up and sign in with Google, linked to the same profile
 - [ ] 4. **Bilingual foundation** - shared English and French translations with a language preference, wired into web
+- [x] 24. **Landing page and dashboard** - public home page for signed-out visitors (logo top left, log in top right, headline for parents in a high-conflict separation, get started), and a dashboard shell where signed-in parents land
 
 ### Families
 

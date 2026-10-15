@@ -10,21 +10,26 @@ import { AuthMessages } from "@/lib/auth/messages";
 
 export const metadata: Metadata = { title: AuthMessages.signIn.submit };
 
-// Only a known error code from the URL maps to a message; the URL never
-// supplies text.
+// Only a known error or notice code from the URL maps to a message; the URL
+// never supplies text.
 const URL_ERRORS: Record<string, string> = {
   "link-invalid": AuthMessages.errors.linkInvalid,
   "google-failed": AuthMessages.errors.googleFailed,
 };
+const URL_NOTICES: Record<string, string> = {
+  "password-updated": AuthMessages.notices.passwordUpdated,
+};
+
+function known(map: Record<string, string>, code: string | string[] | undefined) {
+  return typeof code === "string" && Object.hasOwn(map, code) ? map[code] : undefined;
+}
 
 async function LinkNotice({ searchParams }: PageProps<"/sign-in">) {
-  const { error } = await searchParams;
-  const message =
-    typeof error === "string" && Object.hasOwn(URL_ERRORS, error)
-      ? URL_ERRORS[error]
-      : undefined;
-  if (!message) return null;
-  return <FormAlert error={message} />;
+  const { error, notice } = await searchParams;
+  const errorMessage = known(URL_ERRORS, error);
+  const noticeMessage = known(URL_NOTICES, notice);
+  if (!errorMessage && !noticeMessage) return null;
+  return <FormAlert error={errorMessage} notice={noticeMessage} />;
 }
 
 export default function SignInPage(props: PageProps<"/sign-in">) {

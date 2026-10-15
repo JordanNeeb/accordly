@@ -1,6 +1,6 @@
 # Tango - Project Overview
 
-<!-- blueprint:source-hash 79109a898c74be441c156ea89397b17ee31b37432247c633ae93f1d9d3cc2c6f -->
+<!-- blueprint:source-hash 58c72fb10c21ce75932935f0288c29bf7026a9920a83de15addf9132e3a3ad9f -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready message record, a calendar
@@ -59,6 +59,7 @@ In build-plan order. Headline differentiators: **6-7** (permanent record),
    - 3a. **Email and password authentication** - email confirmation and password reset.
    - 3b. **Google sign-in** - same profile as email sign-in.
 4. **Bilingual foundation** - shared EN/FR translations and language preference on web.
+24. **Landing page and dashboard** - public `/` for signed-out visitors (logo, log in, headline for parents in high-conflict separations, get started) and a `/dashboard` shell for signed-in parents. English only; feature 4 translates it.
 
 **Families**
 5. **Family pairing** - invite co-parent by email; family created on acceptance; duplicate pairings blocked; add children.
@@ -218,6 +219,8 @@ content (status transitions are new rows or narrowly scoped columns).
   logo, and branding set manually. Screenshots in `design/references/`
   (reference only).
 - All UI, emails, notifications, and exports in English and French.
+- Public landing page at `/` for signed-out visitors (feature 24), aimed at
+  parents in a high-conflict separation; signed-in visitors go to `/dashboard`.
 - Main web screens (route paths decided in feature specs): sign up/sign in,
   family setup and invite, children, chat with search, calendar with requests,
   agreement entry and review, expenses, payments setup and status, support

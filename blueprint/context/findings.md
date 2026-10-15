@@ -23,21 +23,13 @@
 **Suggested fix:** Keep client queries filtered by `id`; if needed later, rewrite as `id in (select private.co_member_ids())` set-returning helper so it evaluates once per statement.
 **Resolution:**
 
-### F-03 [P3] open - Profile notice lookup accepts Object.prototype keys
-
-**File:** apps/web/src/app/profile/page.tsx:47
-**Found:** 2026-10-13 by /audit independent (scope: current; lens: security, quality)
-**Why it matters:** `NOTICES[notice]` is a plain-object lookup, so `/profile?notice=constructor` (or `toString`, `__proto__`) yields `Object`, a function, or `Object.prototype` instead of `undefined`. That value is passed as the `notice` prop to the client `ProfileForm`, which React cannot serialize from a Server Component, so the profile render fails. Anyone can send a signed-in parent such a link. The impact is limited to an error page; no text injection is possible.
-**Suggested fix:** Guard the lookup with `Object.hasOwn(NOTICES, notice)` (or use a `Map`). Apply the same guard anywhere a URL value indexes a record. No current requirement is lost.
-**Resolution:**
-
 ### F-04 [P3] open - Proxy redirects drop refreshed session cookies
 
-**File:** apps/web/src/proxy.ts:52
+**File:** apps/web/src/proxy.ts:57
 **Found:** 2026-10-13 by /audit independent (scope: current; lens: quality, security)
 **Why it matters:** `getClaims()` may refresh the session and `setAll` writes the new cookies and cache headers onto `response`, but the redirect branch returns a fresh `NextResponse.redirect(url)` without them. A signed-in parent with an expired access token who opens `/sign-in` or `/sign-up` keeps the rotated-out refresh token. Today it is masked by `refresh_token_reuse_interval = 10`, because the follow-up request reuses the token within 10 seconds. A cleared session on the signed-out branch is likewise not cleared until the next request. This departs from the `@supabase/ssr` rule to always return the response that carries the refreshed cookies (spec Notes for the AI).
 **Suggested fix:** Before returning the redirect, copy `response.cookies.getAll()` onto it (and the cache headers passed to `setAll`). No current requirement is lost.
-**Resolution:**
+**Resolution:** Re-examined 2026-10-15 (target 5a668a0): still open, now at line 57. The delta widens its reach: signed-in visits to `/` (the most common entry point) and signed-out visits to `/dashboard` now take the redirect branch. Still masked by the 10-second reuse interval, so severity stays P3. Re-examined 2026-10-15 (target 8f6565b): unchanged, still open at line 57.
 
 ### F-05 [P3] open - Any signed-in session can set a new password without reauthentication
 
@@ -45,7 +37,7 @@
 **Found:** 2026-10-13 by /audit independent (scope: current; lens: security)
 **Why it matters:** `/reset-password` and `updatePassword` only require some session, not a recovery session, and `supabase/config.toml:229` keeps `secure_password_change = false`. Anyone holding a parent's signed-in browser can therefore open `/reset-password` and replace the password without knowing the current one, locking the parent out of permanent records. The spec intends the page for the recovery flow, and the out-of-scope list excludes changing a password from a signed-in session.
 **Suggested fix:** User decision. Either set `secure_password_change = true` (a recovery-link sign-in counts as a recent login, so the reset flow keeps working), or accept the risk as the standard Supabase recovery pattern. No current requirement is lost with the config change.
-**Resolution:**
+**Resolution:** Re-examined 2026-10-15 (target 5a668a0): still open, now at `(auth)/actions.ts:174`. The new sign-out after `updateUser` does not change it, because the password is already replaced by then. Re-examined 2026-10-15 (target 8f6565b): unchanged, still open (`updatePassword` at `(auth)/actions.ts:162`, `supabase/config.toml:229`).
 
 ### F-06 [P3] open - Success notices replace the form, so announcement and focus are unreliable
 

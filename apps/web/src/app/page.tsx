@@ -1,7 +1,6 @@
-import { redirect } from "next/navigation";
+import { LandingHero } from "@/components/landing/landing-hero";
 
-// The profile is the signed-in home until families exist (feature 5); the
-// proxy sends signed-out visitors on to /sign-in.
+// The public landing page. The proxy sends signed-in visitors on to /dashboard.
 export default function Home() {
-  redirect("/profile");
+  return <LandingHero />;
 }

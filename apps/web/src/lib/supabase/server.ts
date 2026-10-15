@@ -3,10 +3,14 @@ import "server-only";
 import { type Database } from "@tango/shared";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
-// One client per request. Reading cookies makes the caller dynamic, so call this
-// inside a Suspense boundary, a Server Action, or a Route Handler.
+// One client per request. Call this inside a Suspense boundary, a Server
+// Action, or a Route Handler. `connection()` marks everything after it as
+// request-time: the auth client reads the clock (`Date.now()`) to check session
+// expiry, which Next.js must not run while prerendering.
 export async function createClient() {
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient<Database>(

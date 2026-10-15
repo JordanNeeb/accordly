@@ -65,14 +65,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "created_at": string,"first_name": string | null,"id": string,"language": string,"last_name": string | null
+                    "created_at": string,"id": string,"language": string,"name": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"first_name"?: string | null,"id": string,"language"?: string,"last_name"?: string | null
+                    "created_at"?: string,"id": string,"language"?: string,"name"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"first_name"?: string | null,"id"?: string,"language"?: string,"last_name"?: string | null
+                    "created_at"?: string,"id"?: string,"language"?: string,"name"?: string | null
                   }
                   Relationships: [
                     

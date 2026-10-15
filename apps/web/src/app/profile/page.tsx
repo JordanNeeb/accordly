@@ -20,7 +20,7 @@ async function Profile() {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("first_name, last_name")
+    .select("name")
     .eq("id", claims.sub)
     .single();
 
@@ -36,8 +36,7 @@ async function Profile() {
   return (
     <ProfileForm
       email={claims.email ?? ""}
-      firstName={profile.first_name ?? ""}
-      lastName={profile.last_name ?? ""}
+      name={profile.name ?? ""}
     />
   );
 }

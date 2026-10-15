@@ -1,6 +1,6 @@
 # Tango - Project Overview
 
-<!-- blueprint:source-hash 58c72fb10c21ce75932935f0288c29bf7026a9920a83de15addf9132e3a3ad9f -->
+<!-- blueprint:source-hash b2335a4d8f404b91aad74023bc4c1bf3e51810123148144263821c98d2299c93 -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready message record, a calendar
@@ -104,8 +104,8 @@ content (status transitions are new rows or narrowly scoped columns).
 
 ### profiles
 - `id` (uuid, = `auth.users.id`)
-- `first_name`, `last_name` (text, nullable) - added on the profile after sign-up;
-  required before sending an invite (feature 5)
+- `name` (text, nullable, 1-100 chars) - set at sign-up or from Google, editable
+  on the profile; required before sending an invite (feature 5)
 - `language` (`'en' | 'fr'`, default `en`) - set by the EN/FR toggle (feature 4)
 - `created_at`
 

@@ -45,7 +45,7 @@
 **Found:** 2026-10-13 by /audit independent (scope: current; lens: quality)
 **Why it matters:** On success, sign-up (and `forgot-password-form.tsx:20`) unmounts the form and mounts a new `FormAlert` that already contains the notice. Screen readers often skip a live region that is created with its content in place, and the focused submit button vanishes, which drops focus to `body`. The "check your email" message is the only next-step instruction, so a screen-reader user may never hear it.
 **Suggested fix:** Keep one persistent `FormAlert` mounted and render the notice into it (hiding the fields), or move focus to the notice with `tabIndex={-1}`. No current requirement is lost.
-**Resolution:**
+**Resolution:** Re-examined 2026-10-15 (target ad2b8c3): unchanged, still open at `sign-up-form.tsx:18`; the new Name field does not affect it.
 
 ### F-07 [P3] open - Complete-profile prompt reappears after a later failed save
 
@@ -53,4 +53,12 @@
 **Found:** 2026-10-13 by /audit independent (scope: current; lens: quality)
 **Why it matters:** `needsName` combines the current action notice with the initial server props. After a first successful save, the props still hold the empty names, so any later submission that returns a field or form error shows "Add your first and last name" again even though both names are saved.
 **Suggested fix:** Track saved names from the last successful result (for example `state.values` when `state.notice === saved`), or call `revalidatePath('/profile')` / `refresh()` after a successful update so the props reflect the database. No current requirement is lost.
+**Resolution:** Re-examined 2026-10-15 (target ad2b8c3): still open, now at line 30 (`needsName = !saved && !name`). The single-field rewrite keeps the same props-based logic, so after a first successful save of an empty profile any later failed save shows "Add your name" again.
+
+### F-08 [P3] open - Name sanitising strips only spaces, so visually blank names pass
+
+**File:** supabase/migrations/20261015023747_single_profile_name.sql:7
+**Found:** 2026-10-15 by /audit independent (scope: current; lens: security, quality)
+**Why it matters:** Postgres `trim()` removes only spaces, while the web's `validateName` uses JavaScript `trim()` (all Unicode whitespace). The check at line 7 and the trigger sanitising at lines 42-45 therefore accept a name of only tabs, newlines, or non-breaking spaces. In a rolled-back local test, sign-up metadata `{"name":"\t\n"}` produced a profile with that 2-character name, and `{"name":{"x":1}}` stored the JSON text `{"x": 1}`. Both paths are reachable with the public key (direct sign-up, or a direct PostgREST `update` of `name`). The result is a "name" that counts as set (the profile prompt hides, and a future invite gate on `name is not null` would pass) while the dashboard's JS trim falls back to the email, and a blank name could appear on court-facing records. Impact is low: it is self-inflicted by the parent and the sign-up never fails.
+**Suggested fix:** In a new migration, normalise with a whitespace-aware expression, for example `nullif(btrim(regexp_replace(value, '\s+', ' ', 'g')), '')` (or `btrim(value, E' \t\n\r\u00a0')`) in both the trigger and a replacement check, and read the metadata only when `jsonb_typeof(... -> 'name') = 'string'`. No current requirement is lost.
 **Resolution:**

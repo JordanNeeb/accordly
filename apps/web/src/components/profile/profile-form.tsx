@@ -16,19 +16,18 @@ import { type ActionResult } from "@/lib/auth/validation";
 
 type ProfileFormProps = {
   email: string;
-  firstName: string;
-  lastName: string;
+  name: string;
 };
 
 // Layout from the Tailwind Plus settings form, trimmed to the profile fields.
-export function ProfileForm({ email, firstName, lastName }: ProfileFormProps) {
+export function ProfileForm({ email, name }: ProfileFormProps) {
   const [state, formAction] = useActionState<ActionResult, FormData>(updateProfile, {});
   const formRef = useRef<HTMLFormElement>(null);
   useFocusFirstError(formRef, state);
 
-  // Prompt until both names have been saved.
+  // Prompt until a name has been saved.
   const saved = state.notice === AuthMessages.profile.saved;
-  const needsName = !saved && (!firstName || !lastName);
+  const needsName = !saved && !name;
 
   return (
     <form ref={formRef} action={formAction} noValidate>
@@ -69,25 +68,14 @@ export function ProfileForm({ email, firstName, lastName }: ProfileFormProps) {
             </p>
           </div>
 
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-4">
             <TextField
-              id="firstName"
-              name="firstName"
-              label={AuthMessages.fields.firstName}
-              autoComplete="given-name"
-              defaultValue={state.values?.firstName ?? firstName}
-              error={state.fieldErrors?.firstName}
-            />
-          </div>
-
-          <div className="sm:col-span-3">
-            <TextField
-              id="lastName"
-              name="lastName"
-              label={AuthMessages.fields.lastName}
-              autoComplete="family-name"
-              defaultValue={state.values?.lastName ?? lastName}
-              error={state.fieldErrors?.lastName}
+              id="name"
+              name="name"
+              label={AuthMessages.fields.name}
+              autoComplete="name"
+              defaultValue={state.values?.name ?? name}
+              error={state.fieldErrors?.name}
             />
           </div>
         </div>

@@ -23,6 +23,15 @@ export function SignUpForm() {
         <FormAlert error={state.formError} />
 
         <TextField
+          id="name"
+          name="name"
+          label={AuthMessages.fields.name}
+          autoComplete="name"
+          defaultValue={state.values?.name}
+          error={state.fieldErrors?.name}
+        />
+
+        <TextField
           id="email"
           name="email"
           type="email"

@@ -2,8 +2,7 @@
 // translations without touching the forms.
 export const AuthMessages = {
   fields: {
-    firstName: "First name",
-    lastName: "Last name",
+    name: "Name",
     email: "Email address",
     password: "Password",
     newPassword: "New password",
@@ -52,7 +51,7 @@ export const AuthMessages = {
     description:
       "Your name is shown to your co-parent and in exported records.",
     completePrompt:
-      "Add your first and last name. Your co-parent will see them on invites, messages, and exported records.",
+      "Add your name. Your co-parent will see it on invites, messages, and exported records.",
     emailHint: "The email you sign in with.",
     save: "Save",
     saving: "Saving…",
@@ -71,8 +70,7 @@ export const AuthMessages = {
     passwordLength: "Use between 8 and 72 characters.",
     passwordWeak: "Choose a stronger password.",
     passwordSame: "Choose a password different from your current one.",
-    firstNameLength: "Enter a first name of up to 100 characters.",
-    lastNameLength: "Enter a last name of up to 100 characters.",
+    nameLength: "Enter a name of up to 100 characters.",
     invalidCredentials: "The email or password is incorrect.",
     emailNotConfirmed:
       "Confirm your email before signing in. Check your inbox for the link.",

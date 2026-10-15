@@ -14,19 +14,12 @@ export async function updateProfile(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
-  const { name: firstName, error: firstNameError } = validateName(
-    readText(formData, "firstName"),
-    AuthMessages.errors.firstNameLength,
+  const { name, error: nameError } = validateName(
+    readText(formData, "name"),
+    AuthMessages.errors.nameLength,
   );
-  const { name: lastName, error: lastNameError } = validateName(
-    readText(formData, "lastName"),
-    AuthMessages.errors.lastNameLength,
-  );
-  const fieldErrors: FieldErrors = {
-    firstName: firstNameError,
-    lastName: lastNameError,
-  };
-  const values = { firstName, lastName };
+  const fieldErrors: FieldErrors = { name: nameError };
+  const values = { name };
   if (hasErrors(fieldErrors)) return { fieldErrors, values };
 
   const supabase = await createClient();
@@ -38,7 +31,7 @@ export async function updateProfile(
 
   const { error } = await supabase
     .from("profiles")
-    .update({ first_name: firstName, last_name: lastName })
+    .update({ name })
     .eq("id", userId);
 
   if (error) {

@@ -48,9 +48,10 @@ and handle shared expenses, with three differentiators:
 - Sign up, sign in, sign out, profile via Supabase Auth. Sign-in methods:
   email and password (with email confirmation and password reset) and Google.
   Other providers (Apple, Facebook) later.
-- Sign-up asks only for email and password. Parents add their first and last
-  name on their profile afterward; names are required before sending a
-  co-parent invite. Language is chosen with an EN/FR toggle, not a form field.
+- Sign-up asks for name, email and password; Google sign-up uses the name from
+  Google. Parents can change their name on their profile; a name is required
+  before sending a co-parent invite. Language is chosen with an EN/FR toggle,
+  not a form field.
 - Starting a family and inviting the co-parent by email is one step. The
   family is created only when the co-parent accepts, so every family has both
   parents from the start.
@@ -169,7 +170,7 @@ and handle shared expenses, with three differentiators:
 
 Everything belongs to a family except the user's own profile and subscription.
 
-- **Users/profiles:** identity, first and last name, language preference,
+- **Users/profiles:** identity, name, language preference,
   subscription status.
 - **Families:** members (exactly two parents in v1), time zone.
 - **Children:** name, birthdate.

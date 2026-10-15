@@ -2,7 +2,7 @@ import { AuthMessages } from "./messages";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export type AuthField = "firstName" | "lastName" | "email" | "password";
+export type AuthField = "name" | "email" | "password";
 
 export type FieldErrors = Partial<Record<AuthField, string>>;
 
@@ -13,7 +13,7 @@ export type ActionResult = {
   // Lets the sign-in form offer "resend confirmation" only when it applies.
   unconfirmed?: boolean;
   // Submitted values to re-show after React resets the form. Never passwords.
-  values?: { firstName?: string; lastName?: string; email?: string };
+  values?: { name?: string; email?: string };
 };
 
 export function readText(formData: FormData, name: string): string {
@@ -38,7 +38,7 @@ export function validateNewPassword(password: string): string | undefined {
   return undefined;
 }
 
-// First and last name: required when saved, 1-100 characters after trimming.
+// Name: required when saved, 1-100 characters after trimming.
 export function validateName(
   raw: string,
   error: string,

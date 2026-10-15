@@ -11,6 +11,7 @@ import {
   hasErrors,
   readText,
   validateEmail,
+  validateName,
   validateNewPassword,
 } from "@/lib/auth/validation";
 import { createClient } from "@/lib/supabase/server";
@@ -32,18 +33,27 @@ export async function signUp(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
+  const { name, error: nameError } = validateName(
+    readText(formData, "name"),
+    AuthMessages.errors.nameLength,
+  );
   const { email, error: emailError } = validateEmail(readText(formData, "email"));
   const password = readText(formData, "password");
   const fieldErrors: FieldErrors = {
+    name: nameError,
     email: emailError,
     password: validateNewPassword(password),
   };
-  const values = { email };
+  const values = { name, email };
   if (hasErrors(fieldErrors)) return { fieldErrors, values };
 
   const supabase = await createClient();
-  // Names are added on the profile page after sign-up.
-  const { error } = await supabase.auth.signUp({ email, password });
+  // The sign-up trigger copies the name into the new profile.
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { name } },
+  });
 
   if (error) {
     if (error.code === "weak_password") {

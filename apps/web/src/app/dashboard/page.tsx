@@ -19,7 +19,7 @@ async function Dashboard() {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("first_name, last_name")
+    .select("name")
     .eq("id", claims.sub)
     .single();
 
@@ -27,10 +27,7 @@ async function Dashboard() {
     console.error("[dashboard] profile load failed", { code: error.code, message: error.message });
   }
 
-  const name = [profile?.first_name, profile?.last_name]
-    .map((part) => part?.trim())
-    .filter(Boolean)
-    .join(" ");
+  const name = profile?.name?.trim();
 
   return <DashboardShell userName={name || (claims.email ?? "")} />;
 }

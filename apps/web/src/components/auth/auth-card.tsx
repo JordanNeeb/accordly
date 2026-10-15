@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 
+import { LanguageMenu } from "@/components/common/language-menu";
 import { Logo } from "@/components/common/logo";
 
 // Card layout from the Tailwind Plus sign-in component. The logo images are
@@ -17,7 +18,7 @@ export function AuthCard({
   return (
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Logo className="justify-center" />
+        <Logo className="mx-auto" />
         <h1 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-white">
           {title}
         </h1>
@@ -33,6 +34,9 @@ export function AuthCard({
             {footer}
           </p>
         ) : null}
+        <div className="mt-6 flex justify-center">
+          <LanguageMenu />
+        </div>
       </div>
     </div>
   );
@@ -53,7 +57,7 @@ export function AuthSimple({
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <Logo className="justify-center" />
+        <Logo className="mx-auto" />
         <h1 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-white">
           {title}
         </h1>
@@ -71,6 +75,9 @@ export function AuthSimple({
             {footer}
           </p>
         ) : null}
+        <div className="mt-6 flex justify-center">
+          <LanguageMenu />
+        </div>
       </div>
     </div>
   );

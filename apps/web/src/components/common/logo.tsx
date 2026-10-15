@@ -1,10 +1,14 @@
 import Image from "next/image";
+import Link from "next/link";
 
 // Tango logo artwork, cropped from design/brand/. The dark-text version
 // shows in light mode and the white-text version in dark mode. The hidden one
 // stays lazy, so the browser only downloads the variant it shows. `onDark`
 // always shows the white-text version, for surfaces that are dark in both
 // themes. The brand name is never translated, so the alt text is written here.
+// The logo links home: `/` sends signed-out visitors to the landing page and
+// the proxy sends signed-in parents on to /dashboard. Signed-in-only pages pass
+// `/dashboard` to skip that redirect.
 
 // Display size (h-9 = 36px tall) at the artwork's 1497x493 ratio, so next/image
 // serves 1x/2x versions of this size rather than the full-size artwork.
@@ -14,12 +18,17 @@ const HEIGHT = 36;
 export function Logo({
   className = "",
   onDark = false,
+  href = "/",
 }: {
   className?: string;
   onDark?: boolean;
+  href?: "/" | "/dashboard";
 }) {
   return (
-    <div className={`flex ${className}`}>
+    <Link
+      href={href}
+      className={`flex w-fit rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-500 ${className}`}
+    >
       {onDark ? null : (
         <Image
           src="/brand/logo-light.png"
@@ -36,6 +45,6 @@ export function Logo({
         height={HEIGHT}
         className={onDark ? "h-9 w-auto" : "hidden h-9 w-auto dark:block"}
       />
-    </div>
+    </Link>
   );
 }

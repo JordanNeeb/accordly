@@ -1,4 +1,6 @@
-import { AuthMessages } from "./messages";
+import { type Messages } from "@tango/shared";
+
+type ErrorMessages = Messages["auth"]["errors"];
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,19 +23,25 @@ export function readText(formData: FormData, name: string): string {
   return typeof value === "string" ? value : "";
 }
 
-export function validateEmail(raw: string): { email: string; error?: string } {
+export function validateEmail(
+  raw: string,
+  errors: ErrorMessages,
+): { email: string; error?: string } {
   const email = raw.trim();
-  if (!email) return { email, error: AuthMessages.errors.emailRequired };
+  if (!email) return { email, error: errors.emailRequired };
   if (email.length > 254 || !EMAIL_PATTERN.test(email)) {
-    return { email, error: AuthMessages.errors.emailInvalid };
+    return { email, error: errors.emailInvalid };
   }
   return { email };
 }
 
 // Sign-in only checks presence; length rules apply when a password is set.
-export function validateNewPassword(password: string): string | undefined {
+export function validateNewPassword(
+  password: string,
+  errors: ErrorMessages,
+): string | undefined {
   if (password.length < 8 || password.length > 72) {
-    return AuthMessages.errors.passwordLength;
+    return errors.passwordLength;
   }
   return undefined;
 }

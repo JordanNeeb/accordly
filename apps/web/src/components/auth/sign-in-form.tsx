@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useActionState, useRef } from "react";
 
-import { resendConfirmation, signIn } from "@/app/(auth)/actions";
-import { AuthMessages } from "@/lib/auth/messages";
+import { resendConfirmation, signIn } from "@/app/[lang]/(auth)/actions";
+import { useMessages } from "@/lib/i18n/language-provider";
 import { type ActionResult } from "@/lib/auth/validation";
 
 import { FormAlert, SubmitButton, TextField } from "./fields";
@@ -13,6 +13,7 @@ import { linkClass, textButtonClass } from "./styles";
 import { useFocusFirstError } from "./use-focus-first-error";
 
 export function SignInForm() {
+  const { auth } = useMessages();
   const [state, formAction] = useActionState<ActionResult, FormData>(signIn, {});
   const [resendState, resendAction] = useActionState<ActionResult, FormData>(
     resendConfirmation,
@@ -32,7 +33,7 @@ export function SignInForm() {
           id="email"
           name="email"
           type="email"
-          label={AuthMessages.fields.email}
+          label={auth.fields.email}
           autoComplete="email"
           defaultValue={state.values?.email}
           error={state.fieldErrors?.email}
@@ -42,19 +43,19 @@ export function SignInForm() {
           id="password"
           name="password"
           type="password"
-          label={AuthMessages.fields.password}
+          label={auth.fields.password}
           autoComplete="current-password"
           error={state.fieldErrors?.password}
           labelAction={
             <Link href="/forgot-password" className={`text-sm/6 ${linkClass}`}>
-              {AuthMessages.signIn.forgotPassword}
+              {auth.signIn.forgotPassword}
             </Link>
           }
         />
 
         <SubmitButton
-          label={AuthMessages.signIn.submit}
-          pendingLabel={AuthMessages.signIn.submitting}
+          label={auth.signIn.submit}
+          pendingLabel={auth.signIn.submitting}
         />
       </form>
 
@@ -62,8 +63,8 @@ export function SignInForm() {
         <form action={resendAction} className="text-center">
           <input type="hidden" name="email" value={state.values?.email ?? ""} />
           <SubmitButton
-            label={AuthMessages.signIn.resend}
-            pendingLabel={AuthMessages.signIn.resending}
+            label={auth.signIn.resend}
+            pendingLabel={auth.signIn.resending}
             className={textButtonClass}
           />
         </form>

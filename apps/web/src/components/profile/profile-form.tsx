@@ -2,7 +2,7 @@
 
 import { useActionState, useRef } from "react";
 
-import { updateProfile } from "@/app/profile/actions";
+import { updateProfile } from "@/app/[lang]/profile/actions";
 import { FormAlert, SubmitButton, TextField } from "@/components/auth/fields";
 import {
   hintTextClass,
@@ -11,7 +11,7 @@ import {
   saveButtonClass,
 } from "@/components/auth/styles";
 import { useFocusFirstError } from "@/components/auth/use-focus-first-error";
-import { AuthMessages } from "@/lib/auth/messages";
+import { useMessages } from "@/lib/i18n/language-provider";
 import { type ActionResult } from "@/lib/auth/validation";
 
 type ProfileFormProps = {
@@ -21,28 +21,29 @@ type ProfileFormProps = {
 
 // Layout from the Tailwind Plus settings form, trimmed to the profile fields.
 export function ProfileForm({ email, name }: ProfileFormProps) {
+  const { auth } = useMessages();
   const [state, formAction] = useActionState<ActionResult, FormData>(updateProfile, {});
   const formRef = useRef<HTMLFormElement>(null);
   useFocusFirstError(formRef, state);
 
   // Prompt until a name has been saved.
-  const saved = state.notice === AuthMessages.profile.saved;
+  const saved = state.notice === auth.profile.saved;
   const needsName = !saved && !name;
 
   return (
     <form ref={formRef} action={formAction} noValidate>
       <div className="border-b border-gray-900/10 pb-12 dark:border-white/10">
         <h1 className="text-base/7 font-semibold text-gray-900 dark:text-white">
-          {AuthMessages.profile.title}
+          {auth.profile.title}
         </h1>
         <p className="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">
-          {AuthMessages.profile.description}
+          {auth.profile.description}
         </p>
 
         <div className="mt-6 space-y-4">
           {needsName ? (
             <p className="rounded-md bg-indigo-50 p-4 text-sm text-indigo-800 dark:bg-indigo-500/15 dark:text-indigo-300">
-              {AuthMessages.profile.completePrompt}
+              {auth.profile.completePrompt}
             </p>
           ) : null}
           <FormAlert error={state.formError} notice={state.notice} />
@@ -51,7 +52,7 @@ export function ProfileForm({ email, name }: ProfileFormProps) {
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-4">
             <label htmlFor="email" className={labelClass}>
-              {AuthMessages.fields.email}
+              {auth.fields.email}
             </label>
             <div className="mt-2">
               <input
@@ -64,7 +65,7 @@ export function ProfileForm({ email, name }: ProfileFormProps) {
               />
             </div>
             <p id="email-hint" className={hintTextClass}>
-              {AuthMessages.profile.emailHint}
+              {auth.profile.emailHint}
             </p>
           </div>
 
@@ -72,7 +73,7 @@ export function ProfileForm({ email, name }: ProfileFormProps) {
             <TextField
               id="name"
               name="name"
-              label={AuthMessages.fields.name}
+              label={auth.fields.name}
               autoComplete="name"
               defaultValue={state.values?.name ?? name}
               error={state.fieldErrors?.name}
@@ -83,8 +84,8 @@ export function ProfileForm({ email, name }: ProfileFormProps) {
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <SubmitButton
-          label={AuthMessages.profile.save}
-          pendingLabel={AuthMessages.profile.saving}
+          label={auth.profile.save}
+          pendingLabel={auth.profile.saving}
           className={saveButtonClass}
         />
       </div>

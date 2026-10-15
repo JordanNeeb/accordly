@@ -16,45 +16,53 @@ import {
   BellIcon,
   CalendarIcon,
   ChartPieIcon,
-  Cog6ToothIcon,
   DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { type Messages } from "@tango/shared";
 import Link from "next/link";
 import { useState } from "react";
 
-import { signOut } from "@/app/(auth)/actions";
+import { signOut } from "@/app/[lang]/(auth)/actions";
 import { Logo } from "@/components/common/logo";
-import { DashboardMessages } from "@/lib/dashboard/messages";
+import { useMessages } from "@/lib/i18n/language-provider";
+
+import { SettingsMenu } from "./settings-menu";
 
 // Ported from the dark Tailwind Plus application shell
 // (design/references/tailwind-plus/application/dashboard-dark.jsx). It is always
 // dark until a dark-mode toggle exists; dashboard-light.jsx is kept for that.
 // Navigation,
 // teams, search, and notifications are the reference's placeholders; only the
-// logo, the parent's name, Your profile, and Sign out are wired up.
+// logo, the parent's name, Settings (language), Your profile, and Sign out are
+// wired up.
 
-const navigation = [
-  { name: DashboardMessages.navigation.dashboard, href: "#", icon: HomeIcon, current: true },
-  { name: DashboardMessages.navigation.team, href: "#", icon: UsersIcon, current: false },
-  { name: DashboardMessages.navigation.projects, href: "#", icon: FolderIcon, current: false },
-  { name: DashboardMessages.navigation.calendar, href: "#", icon: CalendarIcon, current: false },
-  {
-    name: DashboardMessages.navigation.documents,
-    href: "#",
-    icon: DocumentDuplicateIcon,
-    current: false,
-  },
-  { name: DashboardMessages.navigation.reports, href: "#", icon: ChartPieIcon, current: false },
-];
-const teams = [
-  { id: 1, name: DashboardMessages.teams.heroicons, href: "#", initial: "H", current: false },
-  { id: 2, name: DashboardMessages.teams.tailwindLabs, href: "#", initial: "T", current: false },
-  { id: 3, name: DashboardMessages.teams.workcation, href: "#", initial: "W", current: false },
-];
+function navigationItems(dashboard: Messages["dashboard"]) {
+  return [
+    { name: dashboard.navigation.dashboard, href: "#", icon: HomeIcon, current: true },
+    { name: dashboard.navigation.team, href: "#", icon: UsersIcon, current: false },
+    { name: dashboard.navigation.projects, href: "#", icon: FolderIcon, current: false },
+    { name: dashboard.navigation.calendar, href: "#", icon: CalendarIcon, current: false },
+    {
+      name: dashboard.navigation.documents,
+      href: "#",
+      icon: DocumentDuplicateIcon,
+      current: false,
+    },
+    { name: dashboard.navigation.reports, href: "#", icon: ChartPieIcon, current: false },
+  ];
+}
+
+function teamItems(dashboard: Messages["dashboard"]) {
+  return [
+    { id: 1, name: dashboard.teams.heroicons, href: "#", initial: "H", current: false },
+    { id: 2, name: dashboard.teams.tailwindLabs, href: "#", initial: "T", current: false },
+    { id: 3, name: dashboard.teams.workcation, href: "#", initial: "W", current: false },
+  ];
+}
 
 const SIGN_OUT_FORM_ID = "dashboard-sign-out";
 
@@ -64,16 +72,17 @@ function classNames(...classes: (string | false | undefined)[]) {
 
 // The sidebar contents, shared by the mobile dialog and the desktop column.
 function Sidebar({ className }: { className: string }) {
+  const { dashboard } = useMessages();
   return (
     <div className={className}>
       <div className="relative flex h-16 shrink-0 items-center">
-        <Logo onDark />
+        <Logo onDark href="/dashboard" />
       </div>
       <nav className="relative flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
             <ul role="list" className="-mx-2 space-y-1">
-              {navigation.map((item) => (
+              {navigationItems(dashboard).map((item) => (
                 <li key={item.name}>
                   <a
                     href={item.href}
@@ -94,10 +103,10 @@ function Sidebar({ className }: { className: string }) {
           </li>
           <li>
             <div className="text-xs/6 font-semibold text-gray-400">
-              {DashboardMessages.teamsHeading}
+              {dashboard.teamsHeading}
             </div>
             <ul role="list" className="-mx-2 mt-2 space-y-1">
-              {teams.map((team) => (
+              {teamItems(dashboard).map((team) => (
                 <li key={team.id}>
                   <a
                     href={team.href}
@@ -118,13 +127,7 @@ function Sidebar({ className }: { className: string }) {
             </ul>
           </li>
           <li className="mt-auto">
-            <a
-              href="#"
-              className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-400 hover:bg-white/5 hover:text-white"
-            >
-              <Cog6ToothIcon aria-hidden="true" className="size-6 shrink-0" />
-              {DashboardMessages.settings}
-            </a>
+            <SettingsMenu />
           </li>
         </ul>
       </nav>
@@ -133,6 +136,7 @@ function Sidebar({ className }: { className: string }) {
 }
 
 export function DashboardShell({ userName }: { userName: string }) {
+  const { dashboard } = useMessages();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -158,7 +162,7 @@ export function DashboardShell({ userName }: { userName: string }) {
                   onClick={() => setSidebarOpen(false)}
                   className="-m-2.5 p-2.5"
                 >
-                  <span className="sr-only">{DashboardMessages.closeSidebar}</span>
+                  <span className="sr-only">{dashboard.closeSidebar}</span>
                   <XMarkIcon aria-hidden="true" className="size-6 text-white" />
                 </button>
               </div>
@@ -181,7 +185,7 @@ export function DashboardShell({ userName }: { userName: string }) {
             onClick={() => setSidebarOpen(true)}
             className="-m-2.5 p-2.5 text-gray-400 hover:text-white lg:hidden"
           >
-            <span className="sr-only">{DashboardMessages.openSidebar}</span>
+            <span className="sr-only">{dashboard.openSidebar}</span>
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
 
@@ -192,8 +196,8 @@ export function DashboardShell({ userName }: { userName: string }) {
             <form action="#" method="GET" className="grid flex-1 grid-cols-1">
               <input
                 name="search"
-                placeholder={DashboardMessages.search}
-                aria-label={DashboardMessages.search}
+                placeholder={dashboard.search}
+                aria-label={dashboard.search}
                 className="col-start-1 row-start-1 block size-full bg-gray-900 pl-8 text-base text-white outline-hidden placeholder:text-gray-500 sm:text-sm/6"
               />
               <MagnifyingGlassIcon
@@ -203,7 +207,7 @@ export function DashboardShell({ userName }: { userName: string }) {
             </form>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-300">
-                <span className="sr-only">{DashboardMessages.viewNotifications}</span>
+                <span className="sr-only">{dashboard.viewNotifications}</span>
                 <BellIcon aria-hidden="true" className="size-6" />
               </button>
 
@@ -217,7 +221,7 @@ export function DashboardShell({ userName }: { userName: string }) {
               <Menu as="div" className="relative">
                 <MenuButton className="relative flex items-center">
                   <span className="absolute -inset-1.5" />
-                  <span className="sr-only">{DashboardMessages.openUserMenu}</span>
+                  <span className="sr-only">{dashboard.openUserMenu}</span>
                   {/* Placeholder avatar from the Tailwind Plus reference. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -244,7 +248,7 @@ export function DashboardShell({ userName }: { userName: string }) {
                       href="/profile"
                       className="block px-3 py-1 text-sm/6 text-white data-focus:bg-white/5 data-focus:outline-hidden"
                     >
-                      {DashboardMessages.yourProfile}
+                      {dashboard.yourProfile}
                     </Link>
                   </MenuItem>
                   <MenuItem>
@@ -253,7 +257,7 @@ export function DashboardShell({ userName }: { userName: string }) {
                       form={SIGN_OUT_FORM_ID}
                       className="block w-full px-3 py-1 text-left text-sm/6 text-white data-focus:bg-white/5 data-focus:outline-hidden"
                     >
-                      {DashboardMessages.signOut}
+                      {dashboard.signOut}
                     </button>
                   </MenuItem>
                 </MenuItems>
@@ -263,7 +267,7 @@ export function DashboardShell({ userName }: { userName: string }) {
         </div>
 
         <main className="py-10">
-          <h1 className="sr-only">{DashboardMessages.title}</h1>
+          <h1 className="sr-only">{dashboard.title}</h1>
           <div className="px-4 sm:px-6 lg:px-8">{/* Dashboard content comes in later features. */}</div>
         </main>
       </div>

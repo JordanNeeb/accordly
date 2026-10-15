@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { restoreProfileLanguage } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 // Google sends the parent back here with a one-time code (or an error, such as
@@ -9,8 +10,11 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) return NextResponse.redirect(new URL("/dashboard", request.url));
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      await restoreProfileLanguage(supabase, data.user.id);
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
     console.error("[auth] exchangeCodeForSession failed", { code: error.code });
   }
 

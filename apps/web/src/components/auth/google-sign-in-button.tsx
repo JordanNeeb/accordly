@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 
-import { signInWithGoogle } from "@/app/(auth)/actions";
-import { AuthMessages } from "@/lib/auth/messages";
+import { signInWithGoogle } from "@/app/[lang]/(auth)/actions";
+import { useMessages } from "@/lib/i18n/language-provider";
 import { type ActionResult } from "@/lib/auth/validation";
 
 import { FormAlert } from "./fields";
@@ -12,6 +12,7 @@ import { socialButtonClass } from "./styles";
 // "Or continue with" section from the Tailwind Plus sign-in component, with a
 // single full-width Google button in place of the two-column grid.
 export function GoogleSignInButton() {
+  const { auth } = useMessages();
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(
     signInWithGoogle,
     {},
@@ -22,7 +23,7 @@ export function GoogleSignInButton() {
       <div className="mt-10 flex items-center gap-x-6">
         <div className="w-full flex-1 border-t border-gray-200 dark:border-white/10" />
         <p className="text-sm/6 font-medium text-nowrap text-gray-900 dark:text-white">
-          {AuthMessages.google.divider}
+          {auth.google.divider}
         </p>
         <div className="w-full flex-1 border-t border-gray-200 dark:border-white/10" />
       </div>
@@ -50,8 +51,8 @@ export function GoogleSignInButton() {
           </svg>
           <span className="text-sm/6 font-semibold">
             {pending
-              ? AuthMessages.google.redirecting
-              : AuthMessages.google.continue}
+              ? auth.google.redirecting
+              : auth.google.continue}
           </span>
         </button>
       </form>

@@ -1,6 +1,5 @@
 "use server";
 
-import { AuthMessages } from "@/lib/auth/messages";
 import {
   type ActionResult,
   type FieldErrors,
@@ -8,15 +7,17 @@ import {
   readText,
   validateName,
 } from "@/lib/auth/validation";
+import { requestMessages } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function updateProfile(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
+  const { auth } = await requestMessages();
   const { name, error: nameError } = validateName(
     readText(formData, "name"),
-    AuthMessages.errors.nameLength,
+    auth.errors.nameLength,
   );
   const fieldErrors: FieldErrors = { name: nameError };
   const values = { name };
@@ -27,7 +28,7 @@ export async function updateProfile(
   // limits updates to the signed-in parent's own profile.
   const { data } = await supabase.auth.getClaims();
   const userId = data?.claims.sub;
-  if (!userId) return { formError: AuthMessages.errors.signedOut, values };
+  if (!userId) return { formError: auth.errors.signedOut, values };
 
   const { error } = await supabase
     .from("profiles")
@@ -36,8 +37,8 @@ export async function updateProfile(
 
   if (error) {
     console.error("[profile] update failed", { code: error.code, message: error.message });
-    return { formError: AuthMessages.errors.unexpected, values };
+    return { formError: auth.errors.unexpected, values };
   }
 
-  return { notice: AuthMessages.profile.saved, values };
+  return { notice: auth.profile.saved, values };
 }

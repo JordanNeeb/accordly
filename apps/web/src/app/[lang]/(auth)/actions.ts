@@ -1,10 +1,10 @@
 "use server";
 
 import { type AuthError } from "@supabase/supabase-js";
+import { type Messages } from "@tango/shared";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { AuthMessages } from "@/lib/auth/messages";
 import {
   type ActionResult,
   type FieldErrors,
@@ -14,6 +14,11 @@ import {
   validateName,
   validateNewPassword,
 } from "@/lib/auth/validation";
+import {
+  requestLanguage,
+  requestMessages,
+  restoreProfileLanguage,
+} from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 const RATE_LIMIT_CODES = new Set([
@@ -23,86 +28,93 @@ const RATE_LIMIT_CODES = new Set([
 
 // Maps Supabase errors we expect to friendly messages; anything else is logged
 // and shown as a generic failure. Raw Supabase messages never reach the UI.
-function unexpected(action: string, error: AuthError | Error): ActionResult {
+function unexpected(
+  action: string,
+  error: AuthError | Error,
+  errors: Messages["auth"]["errors"],
+): ActionResult {
   const code = "code" in error ? error.code : undefined;
   console.error(`[auth] ${action} failed`, { code, message: error.message });
-  return { formError: AuthMessages.errors.unexpected };
+  return { formError: errors.unexpected };
 }
 
 export async function signUp(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
+  const { auth } = await requestMessages();
   const { name, error: nameError } = validateName(
     readText(formData, "name"),
-    AuthMessages.errors.nameLength,
+    auth.errors.nameLength,
   );
-  const { email, error: emailError } = validateEmail(readText(formData, "email"));
+  const { email, error: emailError } = validateEmail(readText(formData, "email"), auth.errors);
   const password = readText(formData, "password");
   const fieldErrors: FieldErrors = {
     name: nameError,
     email: emailError,
-    password: validateNewPassword(password),
+    password: validateNewPassword(password, auth.errors),
   };
   const values = { name, email };
   if (hasErrors(fieldErrors)) return { fieldErrors, values };
 
   const supabase = await createClient();
-  // The sign-up trigger copies the name into the new profile.
+  // The sign-up trigger copies the name and language into the new profile.
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { name } },
+    options: { data: { name, language: await requestLanguage() } },
   });
 
   if (error) {
     if (error.code === "weak_password") {
-      return { fieldErrors: { password: AuthMessages.errors.passwordWeak }, values };
+      return { fieldErrors: { password: auth.errors.passwordWeak }, values };
     }
     if (error.code && RATE_LIMIT_CODES.has(error.code)) {
-      return { formError: AuthMessages.errors.rateLimited, values };
+      return { formError: auth.errors.rateLimited, values };
     }
-    return { ...unexpected("signUp", error), values };
+    return { ...unexpected("signUp", error, auth.errors), values };
   }
 
   // Supabase answers the same way for an email that is already registered, so
   // this notice never reveals whether an account exists.
-  return { notice: AuthMessages.signUp.checkEmail };
+  return { notice: auth.signUp.checkEmail };
 }
 
 export async function signIn(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
-  const { email, error: emailError } = validateEmail(readText(formData, "email"));
+  const { auth } = await requestMessages();
+  const { email, error: emailError } = validateEmail(readText(formData, "email"), auth.errors);
   const password = readText(formData, "password");
   const fieldErrors: FieldErrors = {
     email: emailError,
-    password: password ? undefined : AuthMessages.errors.passwordRequired,
+    password: password ? undefined : auth.errors.passwordRequired,
   };
   const values = { email };
   if (hasErrors(fieldErrors)) return { fieldErrors, values };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     if (error.code === "invalid_credentials") {
-      return { formError: AuthMessages.errors.invalidCredentials, values };
+      return { formError: auth.errors.invalidCredentials, values };
     }
     if (error.code === "email_not_confirmed") {
       return {
-        formError: AuthMessages.errors.emailNotConfirmed,
+        formError: auth.errors.emailNotConfirmed,
         unconfirmed: true,
         values,
       };
     }
     if (error.code && RATE_LIMIT_CODES.has(error.code)) {
-      return { formError: AuthMessages.errors.rateLimited, values };
+      return { formError: auth.errors.rateLimited, values };
     }
-    return { ...unexpected("signIn", error), values };
+    return { ...unexpected("signIn", error, auth.errors), values };
   }
 
+  await restoreProfileLanguage(supabase, data.user.id);
   redirect("/dashboard");
 }
 
@@ -110,8 +122,9 @@ export async function signIn(
 // Google returns to /auth/callback on this origin; Supabase's redirect
 // allow-list still applies, and nothing from the form shapes the URL.
 export async function signInWithGoogle(): Promise<ActionResult> {
+  const { auth } = await requestMessages();
   const origin = (await headers()).get("origin");
-  if (!origin) return { formError: AuthMessages.errors.googleFailed };
+  if (!origin) return { formError: auth.errors.googleFailed };
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -120,8 +133,8 @@ export async function signInWithGoogle(): Promise<ActionResult> {
   });
 
   if (error || !data.url) {
-    if (error) unexpected("signInWithGoogle", error);
-    return { formError: AuthMessages.errors.googleFailed };
+    if (error) unexpected("signInWithGoogle", error, auth.errors);
+    return { formError: auth.errors.googleFailed };
   }
 
   redirect(data.url);
@@ -131,7 +144,8 @@ export async function resendConfirmation(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
-  const { email, error: emailError } = validateEmail(readText(formData, "email"));
+  const { auth } = await requestMessages();
+  const { email, error: emailError } = validateEmail(readText(formData, "email"), auth.errors);
   if (emailError) return { fieldErrors: { email: emailError } };
 
   const supabase = await createClient();
@@ -139,19 +153,20 @@ export async function resendConfirmation(
 
   if (error) {
     if (error.code && RATE_LIMIT_CODES.has(error.code)) {
-      return { formError: AuthMessages.errors.rateLimited, unconfirmed: true };
+      return { formError: auth.errors.rateLimited, unconfirmed: true };
     }
-    return { ...unexpected("resendConfirmation", error), unconfirmed: true };
+    return { ...unexpected("resendConfirmation", error, auth.errors), unconfirmed: true };
   }
 
-  return { notice: AuthMessages.notices.confirmationSent };
+  return { notice: auth.notices.confirmationSent };
 }
 
 export async function requestPasswordReset(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
-  const { email, error: emailError } = validateEmail(readText(formData, "email"));
+  const { auth } = await requestMessages();
+  const { email, error: emailError } = validateEmail(readText(formData, "email"), auth.errors);
   const values = { email };
   if (emailError) return { fieldErrors: { email: emailError }, values };
 
@@ -160,50 +175,52 @@ export async function requestPasswordReset(
 
   if (error) {
     if (error.code && RATE_LIMIT_CODES.has(error.code)) {
-      return { formError: AuthMessages.errors.rateLimited, values };
+      return { formError: auth.errors.rateLimited, values };
     }
-    return { ...unexpected("requestPasswordReset", error), values };
+    return { ...unexpected("requestPasswordReset", error, auth.errors), values };
   }
 
   // Same notice whether or not the account exists.
-  return { notice: AuthMessages.forgotPassword.sent };
+  return { notice: auth.forgotPassword.sent };
 }
 
 export async function updatePassword(
   _previous: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
+  const { auth } = await requestMessages();
   const password = readText(formData, "password");
-  const passwordError = validateNewPassword(password);
+  const passwordError = validateNewPassword(password, auth.errors);
   if (passwordError) return { fieldErrors: { password: passwordError } };
 
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
-  if (!data?.claims.sub) return { formError: AuthMessages.errors.sessionExpired };
+  if (!data?.claims.sub) return { formError: auth.errors.sessionExpired };
 
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
     if (error.code === "weak_password") {
-      return { fieldErrors: { password: AuthMessages.errors.passwordWeak } };
+      return { fieldErrors: { password: auth.errors.passwordWeak } };
     }
     if (error.code === "same_password") {
-      return { fieldErrors: { password: AuthMessages.errors.passwordSame } };
+      return { fieldErrors: { password: auth.errors.passwordSame } };
     }
-    return unexpected("updatePassword", error);
+    return unexpected("updatePassword", error, auth.errors);
   }
 
   // The parent signs in again with the new password. A failed sign-out is
   // logged but doesn't block: the password has already changed, and the proxy
   // sends a still-signed-in parent from /sign-in on to /dashboard.
   const { error: signOutError } = await supabase.auth.signOut();
-  if (signOutError) unexpected("updatePassword signOut", signOutError);
+  if (signOutError) unexpected("updatePassword signOut", signOutError, auth.errors);
   redirect("/sign-in?notice=password-updated");
 }
 
 export async function signOut(): Promise<void> {
+  const { auth } = await requestMessages();
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
-  if (error) unexpected("signOut", error);
+  if (error) unexpected("signOut", error, auth.errors);
   redirect("/sign-in");
 }

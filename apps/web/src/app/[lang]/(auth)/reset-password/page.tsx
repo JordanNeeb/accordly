@@ -4,10 +4,15 @@ import { Suspense } from "react";
 
 import { AuthSimple } from "@/components/auth/auth-card";
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
-import { AuthMessages } from "@/lib/auth/messages";
+import { pageMessages } from "@/lib/i18n/server";
 import { getUserId } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: AuthMessages.resetPassword.title };
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/reset-password">): Promise<Metadata> {
+  const { auth } = await pageMessages(params);
+  return { title: auth.resetPassword.title };
+}
 
 // The recovery email link signs the parent in; without that session there is
 // nothing to reset.
@@ -16,9 +21,12 @@ async function RequireRecoverySession() {
   return <ResetPasswordForm />;
 }
 
-export default function ResetPasswordPage() {
+export default async function ResetPasswordPage({
+  params,
+}: PageProps<"/[lang]/reset-password">) {
+  const { auth } = await pageMessages(params);
   return (
-    <AuthSimple title={AuthMessages.resetPassword.title}>
+    <AuthSimple title={auth.resetPassword.title}>
       <Suspense fallback={null}>
         <RequireRecoverySession />
       </Suspense>

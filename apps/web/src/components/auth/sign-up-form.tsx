@@ -2,8 +2,8 @@
 
 import { useActionState, useRef } from "react";
 
-import { signUp } from "@/app/(auth)/actions";
-import { AuthMessages } from "@/lib/auth/messages";
+import { signUp } from "@/app/[lang]/(auth)/actions";
+import { useMessages } from "@/lib/i18n/language-provider";
 import { type ActionResult } from "@/lib/auth/validation";
 
 import { FormAlert, SubmitButton, TextField } from "./fields";
@@ -11,6 +11,7 @@ import { GoogleSignInButton } from "./google-sign-in-button";
 import { useFocusFirstError } from "./use-focus-first-error";
 
 export function SignUpForm() {
+  const { auth } = useMessages();
   const [state, formAction] = useActionState<ActionResult, FormData>(signUp, {});
   const formRef = useRef<HTMLFormElement>(null);
   useFocusFirstError(formRef, state);
@@ -25,7 +26,7 @@ export function SignUpForm() {
         <TextField
           id="name"
           name="name"
-          label={AuthMessages.fields.name}
+          label={auth.fields.name}
           autoComplete="name"
           defaultValue={state.values?.name}
           error={state.fieldErrors?.name}
@@ -35,7 +36,7 @@ export function SignUpForm() {
           id="email"
           name="email"
           type="email"
-          label={AuthMessages.fields.email}
+          label={auth.fields.email}
           autoComplete="email"
           defaultValue={state.values?.email}
           error={state.fieldErrors?.email}
@@ -45,15 +46,15 @@ export function SignUpForm() {
           id="password"
           name="password"
           type="password"
-          label={AuthMessages.fields.password}
+          label={auth.fields.password}
           autoComplete="new-password"
           error={state.fieldErrors?.password}
-          hint={AuthMessages.fields.passwordHint}
+          hint={auth.fields.passwordHint}
         />
 
         <SubmitButton
-          label={AuthMessages.signUp.submit}
-          pendingLabel={AuthMessages.signUp.submitting}
+          label={auth.signUp.submit}
+          pendingLabel={auth.signUp.submitting}
         />
       </form>
 

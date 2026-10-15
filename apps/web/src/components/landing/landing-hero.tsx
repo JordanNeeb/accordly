@@ -1,8 +1,9 @@
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { type Messages } from "@tango/shared";
 import Link from "next/link";
 
+import { LanguageMenu } from "@/components/common/language-menu";
 import { Logo } from "@/components/common/logo";
-import { LandingMessages } from "@/lib/landing/messages";
 
 // Ported from the Tailwind Plus marketing hero
 // (design/references/tailwind-plus/marketing/hero.jsx). The logo moves from the
@@ -10,7 +11,7 @@ import { LandingMessages } from "@/lib/landing/messages";
 // push the hero down. From lg up the hero is at least one screen tall: content is
 // centred and the screenshot is cropped to fit, and on short windows the page
 // grows and scrolls rather than clipping. The hero is dark in both themes.
-export function LandingHero() {
+export function LandingHero({ messages }: { messages: Messages["landing"] }) {
   return (
     <div className="relative isolate min-h-full overflow-hidden bg-gray-900 lg:flex lg:min-h-dvh lg:flex-col">
       <svg
@@ -56,39 +57,38 @@ export function LandingHero() {
       </div>
       <header className="absolute inset-x-0 top-0 z-50">
         <nav
-          aria-label={LandingMessages.nav.label}
+          aria-label={messages.nav.label}
           className="mx-auto flex max-w-7xl items-center justify-between px-6 pt-10 lg:px-8"
         >
           <Logo onDark />
-          <Link
-            href="/sign-in"
-            className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-white"
-          >
-            {LandingMessages.nav.logIn}
-            <ArrowRightIcon aria-hidden="true" className="size-4" />
-          </Link>
+          <div className="flex items-center gap-x-6">
+            <LanguageMenu onDark />
+            <Link href="/sign-in" className="text-sm/6 font-semibold text-white">
+              {messages.nav.logIn}
+            </Link>
+          </div>
         </nav>
       </header>
       <div className="mx-auto max-w-7xl px-6 pt-10 pb-24 sm:pb-32 lg:flex lg:w-full lg:flex-1 lg:items-center lg:px-8 lg:py-24">
         <div className="mx-auto max-w-2xl shrink-0 lg:mx-0">
           <h1 className="mt-24 text-5xl font-semibold tracking-tight text-pretty text-white sm:mt-32 sm:text-7xl lg:mt-0">
-            {LandingMessages.headline}
+            {messages.headline}
           </h1>
           <p className="mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8">
-            {LandingMessages.description}
+            {messages.description}
           </p>
           <div className="mt-10 flex items-center gap-x-6">
             <Link
               href="/sign-up"
               className="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             >
-              {LandingMessages.getStarted}
+              {messages.getStarted}
             </Link>
             <a
               href="#"
               className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-white"
             >
-              {LandingMessages.learnMore}
+              {messages.learnMore}
               <ArrowRightIcon aria-hidden="true" className="size-4" />
             </a>
           </div>
@@ -98,7 +98,7 @@ export function LandingHero() {
             {/* Placeholder from the Tailwind Plus reference until Tango has a screenshot. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              alt={LandingMessages.screenshotAlt}
+              alt={messages.screenshotAlt}
               src="https://tailwindcss.com/plus-assets/img/component-images/dark-project-app-screenshot.png"
               width={2432}
               height={1442}

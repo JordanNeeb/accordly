@@ -1,6 +1,7 @@
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { restoreProfileLanguage } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 // Where each email link lands after it is verified. The destination is fixed
@@ -17,8 +18,11 @@ export async function GET(request: NextRequest) {
 
   if (tokenHash && type && destination) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
-    if (!error) return NextResponse.redirect(new URL(destination, request.url));
+    const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+    if (!error) {
+      if (data.user) await restoreProfileLanguage(supabase, data.user.id);
+      return NextResponse.redirect(new URL(destination, request.url));
+    }
   }
 
   return NextResponse.redirect(new URL("/sign-in?error=link-invalid", request.url));

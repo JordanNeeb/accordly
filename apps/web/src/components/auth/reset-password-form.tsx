@@ -2,14 +2,15 @@
 
 import { useActionState, useRef } from "react";
 
-import { updatePassword } from "@/app/(auth)/actions";
-import { AuthMessages } from "@/lib/auth/messages";
+import { updatePassword } from "@/app/[lang]/(auth)/actions";
+import { useMessages } from "@/lib/i18n/language-provider";
 import { type ActionResult } from "@/lib/auth/validation";
 
 import { FormAlert, SubmitButton, TextField } from "./fields";
 import { useFocusFirstError } from "./use-focus-first-error";
 
 export function ResetPasswordForm() {
+  const { auth } = useMessages();
   const [state, formAction] = useActionState<ActionResult, FormData>(
     updatePassword,
     {},
@@ -25,15 +26,15 @@ export function ResetPasswordForm() {
         id="password"
         name="password"
         type="password"
-        label={AuthMessages.fields.newPassword}
+        label={auth.fields.newPassword}
         autoComplete="new-password"
         error={state.fieldErrors?.password}
-        hint={AuthMessages.fields.passwordHint}
+        hint={auth.fields.passwordHint}
       />
 
       <SubmitButton
-        label={AuthMessages.resetPassword.submit}
-        pendingLabel={AuthMessages.resetPassword.submitting}
+        label={auth.resetPassword.submit}
+        pendingLabel={auth.resetPassword.submitting}
       />
     </form>
   );

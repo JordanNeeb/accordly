@@ -1,5 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
+import { isLanguage } from "@tango/shared";
 import { type NextRequest, NextResponse } from "next/server";
+
+import {
+  LANGUAGE_COOKIE,
+  LANGUAGE_COOKIE_OPTIONS,
+  preferredLanguage,
+} from "@/lib/i18n/language";
 
 // Signed-out visitors to these pages go to the paired page.
 const SIGNED_IN_ONLY: Record<string, string> = {
@@ -10,11 +17,31 @@ const SIGNED_IN_ONLY: Record<string, string> = {
 // Signed-in visitors to these pages go to their dashboard.
 const SIGNED_OUT_ONLY = ["/", "/sign-in", "/sign-up"];
 
+// Route handlers that live outside `app/[lang]`.
+const UNLOCALIZED_PREFIX = "/auth/";
+
 // Refreshes the Supabase session cookie on every page request and routes
 // visitors by session state. Pages still verify the session themselves; this
-// check is only optimistic.
+// check is only optimistic. Pages are then rewritten to `/<lang><path>`, so the
+// language never shows in the URL.
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  const { pathname } = request.nextUrl;
+  const cookieLang = request.cookies.get(LANGUAGE_COOKIE)?.value;
+  const lang = isLanguage(cookieLang)
+    ? cookieLang
+    : preferredLanguage(request.headers.get("accept-language"));
+  // Server Actions read the language from the cookie, so it is set on this
+  // request before anything else sees it.
+  if (cookieLang !== lang) request.cookies.set(LANGUAGE_COOKIE, lang);
+
+  const localizedUrl = request.nextUrl.clone();
+  localizedUrl.pathname = `/${lang}${pathname === "/" ? "" : pathname}`;
+  const next = () =>
+    pathname.startsWith(UNLOCALIZED_PREFIX)
+      ? NextResponse.next({ request })
+      : NextResponse.rewrite(localizedUrl, { request });
+
+  let response = next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,7 +55,7 @@ export async function proxy(request: NextRequest) {
           for (const { name, value } of cookiesToSet) {
             request.cookies.set(name, value);
           }
-          response = NextResponse.next({ request });
+          response = next();
           for (const { name, value, options } of cookiesToSet) {
             response.cookies.set(name, value, options);
           }
@@ -42,7 +69,6 @@ export async function proxy(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims.sub);
-  const { pathname } = request.nextUrl;
 
   const target = signedIn
     ? SIGNED_OUT_ONLY.includes(pathname)
@@ -54,9 +80,10 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = target;
     url.search = "";
-    return NextResponse.redirect(url);
+    response = NextResponse.redirect(url);
   }
 
+  if (cookieLang !== lang) response.cookies.set(LANGUAGE_COOKIE, lang, LANGUAGE_COOKIE_OPTIONS);
   return response;
 }
 

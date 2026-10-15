@@ -1,0 +1,136 @@
+// English UI strings. The shape of this object is the `Messages` contract that
+// every other language must match exactly.
+export const en = {
+  languageMenu: {
+    // Accessible name of the language menu button. Each language in the menu
+    // is named in its own language, so those names are not translated here.
+    label: 'Language',
+  },
+  auth: {
+    fields: {
+      name: 'Name',
+      email: 'Email address',
+      password: 'Password',
+      newPassword: 'New password',
+      passwordHint: 'At least 8 characters.',
+    },
+    signIn: {
+      title: 'Sign in to your account',
+      submit: 'Sign in',
+      submitting: 'Signing in…',
+      forgotPassword: 'Forgot password?',
+      noAccount: 'New to Tango?',
+      createAccount: 'Create an account',
+      resend: 'Resend confirmation email',
+      resending: 'Sending…',
+    },
+    signUp: {
+      title: 'Create your account',
+      submit: 'Create account',
+      submitting: 'Creating account…',
+      haveAccount: 'Already have an account?',
+      signIn: 'Sign in',
+      checkEmail:
+        'Check your email for a link to confirm your account. Then sign in.',
+    },
+    google: {
+      divider: 'Or continue with',
+      continue: 'Continue with Google',
+      redirecting: 'Redirecting to Google…',
+    },
+    forgotPassword: {
+      title: 'Reset your password',
+      description:
+        "Enter your email and we'll send you a link to reset your password.",
+      submit: 'Send reset link',
+      submitting: 'Sending…',
+      sent: "If an account exists for that email, we've sent a link to reset your password.",
+      backToSignIn: 'Back to sign in',
+    },
+    resetPassword: {
+      title: 'Choose a new password',
+      submit: 'Update password',
+      submitting: 'Updating…',
+    },
+    profile: {
+      title: 'Profile',
+      description:
+        'Your name is shown to your co-parent and in exported records.',
+      completePrompt:
+        'Add your name. Your co-parent will see it on invites, messages, and exported records.',
+      emailHint: 'The email you sign in with.',
+      save: 'Save',
+      saving: 'Saving…',
+      saved: 'Your profile has been saved.',
+      signOut: 'Sign out',
+      loading: 'Loading your profile…',
+    },
+    notices: {
+      passwordUpdated: 'Your password has been updated.',
+      confirmationSent: "We've sent a new confirmation email. Check your inbox.",
+    },
+    errors: {
+      emailRequired: 'Enter your email address.',
+      emailInvalid: 'Enter a valid email address.',
+      passwordRequired: 'Enter your password.',
+      passwordLength: 'Use between 8 and 72 characters.',
+      passwordWeak: 'Choose a stronger password.',
+      passwordSame: 'Choose a password different from your current one.',
+      nameLength: 'Enter a name of up to 100 characters.',
+      invalidCredentials: 'The email or password is incorrect.',
+      emailNotConfirmed:
+        'Confirm your email before signing in. Check your inbox for the link.',
+      rateLimited: 'Too many attempts. Wait a few minutes and try again.',
+      linkInvalid: 'That link is invalid or has expired. Request a new one.',
+      sessionExpired: 'Your reset link has expired. Request a new one.',
+      signedOut: 'Your session has ended. Sign in again.',
+      googleFailed: "Google sign-in didn't complete. Try again.",
+      unexpected: 'Something went wrong. Please try again.',
+    },
+  },
+  // Navigation items, teams, and search are Tailwind Plus placeholders until
+  // the features behind them exist. Team names are brand names.
+  dashboard: {
+    title: 'Dashboard',
+    navigation: {
+      dashboard: 'Dashboard',
+      team: 'Team',
+      projects: 'Projects',
+      calendar: 'Calendar',
+      documents: 'Documents',
+      reports: 'Reports',
+    },
+    teamsHeading: 'Your teams',
+    teams: {
+      heroicons: 'Heroicons',
+      tailwindLabs: 'Tailwind Labs',
+      workcation: 'Workcation',
+    },
+    settings: 'Settings',
+    search: 'Search',
+    openSidebar: 'Open sidebar',
+    closeSidebar: 'Close sidebar',
+    viewNotifications: 'View notifications',
+    openUserMenu: 'Open user menu',
+    yourProfile: 'Your profile',
+    signOut: 'Sign out',
+  },
+  // "Learn more" and the screenshot text are Tailwind Plus placeholders, kept
+  // until real content exists.
+  landing: {
+    nav: {
+      label: 'Main',
+      logIn: 'Log in',
+    },
+    headline: 'Co-parent without the conflict.',
+    description:
+      'Built in Canada for Canadian families. Permanent, court-ready messages, a schedule both parents stick to, and expenses and support paid from your Canadian bank.',
+    getStarted: 'Get started',
+    learnMore: 'Learn more',
+    screenshotAlt: 'App screenshot',
+  },
+} as const;
+
+type Widen<T> = { [K in keyof T]: T[K] extends string ? string : Widen<T[K]> };
+
+export type Messages = Widen<typeof en>;

@@ -3,10 +3,15 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { DashboardMessages } from "@/lib/dashboard/messages";
+import { pageMessages } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: DashboardMessages.title };
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/dashboard">): Promise<Metadata> {
+  const { dashboard } = await pageMessages(params);
+  return { title: dashboard.title };
+}
 
 // Shows the parent's name, falling back to their email when no name is saved
 // or the profile can't be read. The name is non-essential, so a failed read is

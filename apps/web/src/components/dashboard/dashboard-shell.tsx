@@ -30,8 +30,10 @@ import { signOut } from "@/app/(auth)/actions";
 import { Logo } from "@/components/common/logo";
 import { DashboardMessages } from "@/lib/dashboard/messages";
 
-// Ported from the Tailwind Plus application shell
-// (design/references/tailwind-plus/application/dashboard.jsx). Navigation,
+// Ported from the dark Tailwind Plus application shell
+// (design/references/tailwind-plus/application/dashboard-dark.jsx). It is always
+// dark until a dark-mode toggle exists; dashboard-light.jsx is kept for that.
+// Navigation,
 // teams, search, and notifications are the reference's placeholders; only the
 // logo, the parent's name, Your profile, and Sign out are wired up.
 
@@ -134,7 +136,7 @@ export function DashboardShell({ userName }: { userName: string }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div>
+    <div className="min-h-full bg-gray-900">
       {/* Sign out lives outside the menu, which unmounts its items when closed. */}
       <form id={SIGN_OUT_FORM_ID} action={signOut} />
 
@@ -162,7 +164,7 @@ export function DashboardShell({ userName }: { userName: string }) {
               </div>
             </TransitionChild>
 
-            <Sidebar className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10" />
+            <Sidebar className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10 before:pointer-events-none before:absolute before:inset-0 before:bg-black/10" />
           </DialogPanel>
         </div>
       </Dialog>
@@ -173,18 +175,18 @@ export function DashboardShell({ userName }: { userName: string }) {
       </div>
 
       <div className="lg:pl-72">
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-white/10 bg-gray-900 px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden"
+            className="-m-2.5 p-2.5 text-gray-400 hover:text-white lg:hidden"
           >
             <span className="sr-only">{DashboardMessages.openSidebar}</span>
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
 
           {/* Separator */}
-          <div aria-hidden="true" className="h-6 w-px bg-gray-900/10 lg:hidden" />
+          <div aria-hidden="true" className="h-6 w-px bg-white/10 lg:hidden" />
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <form action="#" method="GET" className="grid flex-1 grid-cols-1">
@@ -192,7 +194,7 @@ export function DashboardShell({ userName }: { userName: string }) {
                 name="search"
                 placeholder={DashboardMessages.search}
                 aria-label={DashboardMessages.search}
-                className="col-start-1 row-start-1 block size-full bg-white pl-8 text-base text-gray-900 outline-hidden placeholder:text-gray-400 sm:text-sm/6"
+                className="col-start-1 row-start-1 block size-full bg-gray-900 pl-8 text-base text-white outline-hidden placeholder:text-gray-500 sm:text-sm/6"
               />
               <MagnifyingGlassIcon
                 aria-hidden="true"
@@ -200,7 +202,7 @@ export function DashboardShell({ userName }: { userName: string }) {
               />
             </form>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+              <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-300">
                 <span className="sr-only">{DashboardMessages.viewNotifications}</span>
                 <BellIcon aria-hidden="true" className="size-6" />
               </button>
@@ -208,7 +210,7 @@ export function DashboardShell({ userName }: { userName: string }) {
               {/* Separator */}
               <div
                 aria-hidden="true"
-                className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
+                className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-100/10"
               />
 
               {/* Profile dropdown */}
@@ -221,26 +223,26 @@ export function DashboardShell({ userName }: { userName: string }) {
                   <img
                     alt=""
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className="size-8 rounded-full bg-gray-50 outline -outline-offset-1 outline-black/5"
+                    className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
                   />
                   <span className="hidden lg:flex lg:items-center">
                     <span
                       aria-hidden="true"
-                      className="ml-4 text-sm/6 font-semibold text-gray-900"
+                      className="ml-4 text-sm/6 font-semibold text-white"
                     >
                       {userName}
                     </span>
-                    <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400" />
+                    <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-500" />
                   </span>
                 </MenuButton>
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg outline outline-gray-900/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                  className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-gray-800 py-2 outline -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                 >
                   <MenuItem>
                     <Link
                       href="/profile"
-                      className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
+                      className="block px-3 py-1 text-sm/6 text-white data-focus:bg-white/5 data-focus:outline-hidden"
                     >
                       {DashboardMessages.yourProfile}
                     </Link>
@@ -249,7 +251,7 @@ export function DashboardShell({ userName }: { userName: string }) {
                     <button
                       type="submit"
                       form={SIGN_OUT_FORM_ID}
-                      className="block w-full px-3 py-1 text-left text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
+                      className="block w-full px-3 py-1 text-left text-sm/6 text-white data-focus:bg-white/5 data-focus:outline-hidden"
                     >
                       {DashboardMessages.signOut}
                     </button>

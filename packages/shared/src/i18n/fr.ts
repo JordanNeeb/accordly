@@ -145,4 +145,44 @@ export const fr: Messages = {
       },
     },
   },
+  pricing: {
+    eyebrow: 'Tarifs',
+    title: 'Choisissez votre forfait',
+    description:
+      "Tout ce qu'il vous faut pour une coparentalité avec moins de conflits, au même endroit. Vous ne serez pas facturé avant que votre coparent se joigne.",
+    frequencyLabel: 'Fréquence de paiement',
+    monthly: 'Mensuel',
+    annually: 'Annuel',
+    perMonth: '/mois',
+    perYear: '/an',
+    featured: 'Le plus populaire',
+    choose: 'Choisir {tier}',
+    tiers: {
+      basic: {
+        name: 'Essentiel',
+        description: "L'essentiel pour une coparentalité bien documentée.",
+        features: [
+          'Messagerie permanente avec indicateur de ton',
+          'Calendrier et ententes partagés',
+          'Paiement des dépenses et de la pension alimentaire',
+          'Exports PDF vérifiables',
+          "60 min d'appels vidéo et 240 min d'appels vocaux par mois",
+          '1 Go de stockage de documents',
+        ],
+      },
+      standard: {
+        name: 'Standard',
+        description: "Tout ce qu'offre Essentiel, plus :",
+        features: ['Appels illimités', 'Stockage de documents illimité', 'Dossiers certifiés (affidavits)'],
+      },
+      premium: {
+        name: 'Premium',
+        description: "Tout ce qu'offre Standard, plus :",
+        features: [
+          'Enregistrement illimité des appels vocaux et vidéo',
+          'Transcription des appels vocaux et vidéo',
+        ],
+      },
+    },
+  },
 };

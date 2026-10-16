@@ -148,6 +148,44 @@ export const en = {
       },
     },
   },
+  pricing: {
+    eyebrow: 'Pricing',
+    title: 'Choose your plan',
+    description:
+      "Everything you need to co-parent with less conflict, all in one place. You won't be charged until your co-parent joins.",
+    frequencyLabel: 'Payment frequency',
+    monthly: 'Monthly',
+    annually: 'Annually',
+    perMonth: '/month',
+    perYear: '/year',
+    featured: 'Most popular',
+    // {tier} is replaced with the tier name.
+    choose: 'Choose {tier}',
+    tiers: {
+      basic: {
+        name: 'Basic',
+        description: 'The essentials for co-parenting on the record.',
+        features: [
+          'Permanent messaging with tone meter',
+          'Shared calendar and agreements',
+          'Expenses and child support payments',
+          'Verifiable PDF exports',
+          '60 min of video and 240 min of voice calls a month',
+          '1 GB of document storage',
+        ],
+      },
+      standard: {
+        name: 'Standard',
+        description: 'Everything in Basic, plus:',
+        features: ['Unlimited calls', 'Unlimited document storage', 'Certified records (affidavits)'],
+      },
+      premium: {
+        name: 'Premium',
+        description: 'Everything in Standard, plus:',
+        features: ['Unlimited call and video recording', 'Call and video transcription'],
+      },
+    },
+  },
 } as const;
 
 type Widen<T> = { [K in keyof T]: T[K] extends string ? string : Widen<T[K]> };

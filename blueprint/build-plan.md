@@ -25,6 +25,9 @@ Do not renumber completed features; their archived specs refer to those IDs.
   - [x] 31a. **Account type choice** - "What best describes you?" screen after Get started; parents continue to pricing, professionals to sign-up, and the account type is saved on the profile
   - [ ] 31b. **Professional home** - a professional account record and a placeholder home for professionals until the portal exists
 - [ ] 16. **Tiered subscriptions** - tier selection screen in onboarding, Stripe Billing in CAD, card collected at sign-up, charging from when the co-parent joins, and lapsed-parent restrictions
+  - [x] 16a. **Pricing page** - Basic, Standard, and Premium tiers with a monthly or annual switch on /pricing; choosing one continues to parent sign-up
+  - [ ] 16b. **Payment method** - Stripe Billing in CAD, card collected after sign-up
+  - [ ] 16c. **Subscription charging** - first charge when the co-parent joins, and lapsed-parent restrictions
 - [ ] 5. **Family pairing** - final onboarding step: invite the co-parent by email (or accept an invite), create the family on acceptance, block duplicate pairings, and add children
 
 ### Messaging

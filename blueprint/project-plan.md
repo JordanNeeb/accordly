@@ -51,6 +51,22 @@ parents who ask.
 3. Web app (Next.js), the full v1 client
 4. Mobile app (Expo, iOS and Android), shipped last and reaching parity with web
 
+### Onboarding
+
+**New in this revision.** New users go through these screens in order:
+
+1. **Family or practitioner.** Practitioners (professionals) skip to step 3;
+   they are always free, and land on a placeholder home until the
+   professional portal exists.
+2. **Select a tier** (see Monetize for the comparison).
+3. **Sign up** with email and password or Google (existing sign-up).
+4. **Add a payment method.** The card is collected here; the first charge
+   happens when the co-parent joins. A parent whose co-parent never joins is
+   never charged. No free trial.
+5. **Add your co-parent** by email, or, for a parent who arrived from an
+   invite, **accept the invite**. Invited co-parents go through the same
+   screens; both parents' charges start when the family is created.
+
 ### Accounts, families, and children
 
 - Sign up, sign in, sign out, profile via Supabase Auth. Sign-in methods:
@@ -137,14 +153,20 @@ conversations instead of one continuous chat per family.
   - **Both parents** can play back and export every recording, whatever their
     tier, and so can professionals the family has invited.
   - Recordings are append-only like messages.
-- **TODO:** recording retention and storage, pending a cost check. Estimates
-  from discovery (one Max parent recording 4 hours a month): audio-only is
-  about $0.36 a month in Agora recording fees and almost nothing in storage;
-  HD video is about $1.44 a month in fees plus 2 to 4 GB of storage a month,
-  growing every year if kept permanently. OFW keeps recordings 365 days, which
-  conflicts with Tango's never-delete principle.
-- **TODO:** whether calls are transcribed (OFW Max does), and per-tier call
-  minute limits (decided with tier contents).
+- Recorded calls are **transcribed** automatically (tier 3, v1, as on OFW Max).
+- **Retention:** recordings and transcripts are kept **3 years from the call
+  date**, whatever happens to the subscription afterwards, then the files are
+  deleted. The call record stays permanently (who, when, how long, both
+  consents, that it was recorded). Both parents get a notice about 30 days
+  before deletion so they can download copies (**Assumption**), and the
+  deletion is logged in the access log and covered by the records-management
+  policy. This is the one exception to never-delete. Cost estimate from
+  discovery: roughly $0.50 to $1 a month per heavy tier 3 recorder at peak.
+- **Tier 1 call limits:** 60 minutes of video and 240 minutes of voice a month,
+  counting only calls the parent places; receiving calls is always free. Minutes
+  reset monthly on the billing date and do not carry over; a parent at the
+  limit is offered an upgrade (**Assumption** for the reset and counting).
+  Tiers 2 and 3 are unlimited.
 - Canada is one-party consent (Criminal Code s. 184), but both parents still
   consent to every recording, for neutrality and admissibility.
 
@@ -245,8 +267,9 @@ Not legal advice; the pre-launch lawyer review confirms this.
 - **Records-custodian affidavit:** like OFW's business records affidavit,
   Tango offers a sworn statement from a named records custodian supporting the
   authenticity and integrity of a family's record. This is an operational
-  process (custodian, template, possibly a fee), shaped by the lawyer review.
-  **TODO:** fee and turnaround.
+  process (custodian, template), shaped by the lawyer review. Certified
+  records are **unlimited on tiers 2 and 3 and not included on tier 1**, as on
+  OFW. **TODO:** turnaround, and whether tier 1 can buy one.
 
 ### Professional portal
 
@@ -334,9 +357,9 @@ fee waiver, and professional account.
   start and end dates.
 - **Activity history:** an append-only log of significant actions.
 
-Records are never hard-deleted. Account closure and legal retention rules are a
-**TODO** for the privacy review; call recording retention is a separate **TODO**
-(see Calls).
+Records are never hard-deleted, with one exception: call recording and
+transcript files are deleted 3 years after the call (the call record stays).
+Account closure and legal retention rules are a **TODO** for the privacy review.
 
 ## 5. Tech - What stack are we using?
 
@@ -378,10 +401,26 @@ Records are never hard-deleted. Account closure and legal retention rules are a
   For comparison, OFW's Canadian 1-year plans are $149.99 (Essentials),
   $216.00 (Premium), and $299.88 (Max), from a third-party 2026 guide; confirm
   before launch. Only tier 1's annual price is a full 20% below OFW.
-- **TODO:** what each tier includes, decided near the end of the build (see the
-  build plan). Known so far: call recording is top tier only.
-- One subscription covers any number of families. No free trial.
-- A parent is not charged until the co-parent has joined.
+- **What each tier includes** (modelled on OFW Essentials, Premium, and Max):
+
+  | | Tier 1 | Tier 2 | Tier 3 |
+  |---|---|---|---|
+  | Messaging, tone meter, calendar, agreements, expenses | Yes | Yes | Yes |
+  | Payments (expenses and child support) | Unlimited | Unlimited | Unlimited |
+  | Verifiable PDF exports | Unlimited | Unlimited | Unlimited |
+  | Calls placed per month | 60 min video, 240 min voice | Unlimited | Unlimited |
+  | Document storage | 1 GB | Unlimited | Unlimited |
+  | Certified records (affidavits) | Not included | Unlimited | Unlimited |
+  | Call recording and transcription, kept 3 years | No | No | Yes |
+
+  Document storage counts message attachments and agreement documents the
+  parent uploads. **Expense receipts never count toward it.** At the cap a
+  tier 1 parent can still read and send text but cannot upload new documents
+  until they upgrade; nothing stored is removed (**Assumption** for at-cap
+  behaviour).
+- One subscription covers any number of families. **No free trial.**
+- The card is collected during onboarding; **a parent is not charged until the
+  co-parent has joined**.
 - **Fee waivers (honour system):** a parent requests free access in the app,
   with an optional reason (social assistance, legal aid, financial hardship,
   safety) and note, and no proof. The owner gets an email and approves or

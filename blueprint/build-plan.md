@@ -19,13 +19,15 @@ Do not renumber completed features; their archived specs refer to those IDs.
 - [x] 4. **Bilingual foundation** - shared English and French translations with a language preference, wired into web
 - [x] 24. **Landing page and dashboard** - public home page for signed-out visitors (logo top left, log in top right, headline for parents in a high-conflict separation, get started), and a dashboard shell where signed-in parents land
 
-### Families
+### Onboarding
 
-- [ ] 5. **Family pairing** - invite the co-parent by email, create the family when they accept, block duplicate pairings, and add children
+- [ ] 31. **Onboarding flow** - choose family or practitioner, then a step-by-step flow into the existing sign-up; practitioners land on a placeholder home until the portal exists
+- [ ] 16. **Tiered subscriptions** - tier selection screen in onboarding, Stripe Billing in CAD, card collected at sign-up, charging from when the co-parent joins, and lapsed-parent restrictions
+- [ ] 5. **Family pairing** - final onboarding step: invite the co-parent by email (or accept an invite), create the family on acceptance, block duplicate pairings, and add children
 
 ### Messaging
 
-- [ ] 6. **Subject conversations** - permanent conversations titled by the parent who starts them, in one scrollable list, with server timestamps, attachments, and no editing or deleting
+- [ ] 6. **Subject conversations** - permanent conversations titled by the parent who starts them, in one scrollable list, with server timestamps, attachments (counted toward tier 1's 1 GB document storage), and no editing or deleting
 - [ ] 7. **Access log and tamper evidence** - first-viewed timestamps shown to both parents, an append-only log of sign-ins, views, and replies, and a hash chain over messages
 - [ ] 8. **Message search** - English and French keyword search across subjects and messages with date, sender, and attachment filters
 - [ ] 25. **AI tone meter** - warn about hostile wording while a parent writes and suggest a calmer rewrite, never blocking a message
@@ -45,23 +47,18 @@ Do not renumber completed features; their archived specs refer to those IDs.
 
 ### Subscriptions
 
-- [ ] 16. **Tiered subscriptions** - three per-parent tiers, monthly or annual, billing that starts when both parents join, and lapsed-parent restrictions
-- [ ] 29. **Fee waivers** - honour-system request for free access, approved or denied by the owner, lasting one year
+- [ ] 29. **Fee waivers** - honour-system request for free access (linked from the onboarding tier step), approved or denied by the owner, lasting one year
 
 ### Calls
 
-- [ ] 26. **Voice and video calls** - in-app calls between co-parents through Agora, with every call logged
-- [ ] 27. **Call recording** - top-tier callers choose to record, both parents consent before the call connects, and both can play back recordings
+- [ ] 26. **Voice and video calls** - in-app calls between co-parents through Agora, every call logged, and tier 1's monthly limit of 60 video and 240 voice minutes placed
+- [ ] 27. **Call recording** - top-tier callers choose to record, both parents consent before the call connects, recordings are transcribed, both parents can play back, and files are kept 3 years
 
 ### Exports, professionals, and notifications
 
 - [ ] 17. **Court-ready export** - bilingual PDF of conversations, the access log, calls, requests, agreements, and payments, with a fingerprint and a public verification page
 - [ ] 28. **Professional portal** - free accounts for lawyers and mediators, access only by a parent's invitation, read-only areas, exports, and full logging
 - [ ] 18. **Email notifications** - messages, requests, approvals, calls, and payment events, without message text
-
-### Tier contents
-
-- [ ] 30. **Tier features** - decide and enforce what each subscription tier includes
 
 ### Mobile
 

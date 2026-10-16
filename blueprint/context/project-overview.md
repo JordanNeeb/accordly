@@ -1,6 +1,6 @@
 # Tango - Project Overview
 
-<!-- blueprint:source-hash b0f725804609c704aadb6b881727684ed3126705f51cb70f156322753f650abd -->
+<!-- blueprint:source-hash 1d879fcc0cb38384bc47c017f10576b31564ac7154b21809a27e361f25ebf37f -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready record of messages and calls,
@@ -28,7 +28,7 @@ low-income parents who ask.
   them, read-only, limited to granted areas.
 - **Parent access states:**
   - *Unpaired* - no family yet; not charged.
-  - *Active subscriber* - access per tier (tier contents TBD, item 30).
+  - *Active subscriber* - access per tier (see Monetization); card collected at onboarding, first charge when the co-parent joins.
   - *Fee waiver* - free for one year on honour-system request approved by the owner.
   - *Lapsed* - can read everything, export, play back recordings, approve or
     deny the other parent's requests and expenses; debits keep running; cannot
@@ -43,8 +43,9 @@ low-income parents who ask.
   data, alter shared history, or act for the other parent; professionals see
   only granted families and areas. Enforce with Supabase RLS, not only the UI.
 - Append-only records: nothing is hard-deleted or edited (conversations,
-  messages, access log, calls and recordings, exports, agreement versions,
-  requests, expenses, payment history).
+  messages, access log, calls, exports, agreement versions, requests, expenses,
+  payment history). One exception: call recording and transcript files are
+  deleted 3 years after the call; the call record stays.
 - Payments in scope; card and bank details stay with Stripe.
 - Admissibility target: Canada Evidence Act ss. 30, 31.1-31.8 and provincial
   acts; records practices aligned with CAN/CGSB-72.34-2024.
@@ -64,11 +65,13 @@ verifiable record), **10-11** (agreement enforcement), **13-15** (real payments)
 4. **Bilingual foundation** - shared EN/FR dictionaries, `profiles.language`, language menu and dashboard Settings.
 24. **Landing page and dashboard** - public `/`, `/dashboard` shell.
 
-**Families**
-5. **Family pairing** - invite co-parent by email; family created on acceptance; duplicates blocked; add children.
+**Onboarding** (screens in order: family or practitioner, tier, sign up, payment, add or accept co-parent)
+31. **Onboarding flow** - family-or-practitioner choice and step routing into the existing sign-up; practitioners skip tier and payment and land on a placeholder home.
+16. **Tiered subscriptions** - tier selection step, Stripe Billing in CAD, card collected at onboarding, first charge when the co-parent joins, lapsed restrictions.
+5. **Family pairing** - final step: invite the co-parent (or accept an invite, same screens before it); family created on acceptance; duplicates blocked; add children.
 
 **Messaging**
-6. **Subject conversations** - parent-titled conversations in one scrollable list, never closed; server timestamps; attachments; no edits or deletes.
+6. **Subject conversations** - parent-titled conversations in one scrollable list, never closed; server timestamps; attachments (tier 1 1 GB cap); no edits or deletes.
 7. **Access log and tamper evidence** - first-viewed timestamps shown to both parents; append-only log of sign-ins, views, replies; hash chain.
 8. **Message search** - EN/FR keyword search over subjects and messages; date, sender, attachment filters; jump to result.
 25. **AI tone meter** - flags hostile wording while writing and suggests a rewrite; never blocks.
@@ -85,20 +88,16 @@ verifiable record), **10-11** (agreement enforcement), **13-15** (real payments)
 15. **Recurring child support** - mutually accepted schedule with automatic debits.
 
 **Subscriptions**
-16. **Tiered subscriptions** - three per-parent tiers, monthly or annual; billing starts when both join; lapsed restrictions.
-29. **Fee waivers** - honour-system request, owner approves or denies, one year.
+29. **Fee waivers** - honour-system request linked from the tier step, owner approves or denies, one year.
 
 **Calls**
-26. **Voice and video calls** - Agora calls without sharing numbers; every call logged.
-27. **Call recording** - top-tier caller opts in per call; both consent before connecting; both parents (and granted professionals) can play back.
+26. **Voice and video calls** - Agora calls without sharing numbers; every call logged; tier 1 limit of 60 video and 240 voice minutes placed per month.
+27. **Call recording** - tier 3 caller opts in per call; both consent before connecting; transcribed; both parents (and granted professionals) can play back; files kept 3 years.
 
 **Exports, professionals, notifications**
 17. **Court-ready export** - EN/FR PDF of conversations, access log, calls, requests, agreements, payments; fingerprint and public verification page.
 28. **Professional portal** - free accounts, parent invitation per family, granted areas, exports, full logging, revocable.
 18. **Email notifications** - messages, requests, approvals, calls, payments; never message text.
-
-**Tier contents**
-30. **Tier features** - decide and enforce what each tier includes.
 
 **Mobile (last, parity with web)**
 19. **Mobile foundation** - auth, shared packages, translations, styling.
@@ -151,8 +150,8 @@ no `UPDATE`/`DELETE` of content.
 - `calls`: `id`, `family_id`, `caller_id`, `callee_id`, `kind` (`voice | video`), `started_at`, `answered_at`, `ended_at`, `recorded` (bool)
 - `call_events`: `call_id`, `user_id`, `event` (e.g. mute, unmute), `created_at`
 - `call_recording_consents`: `call_id`, `user_id`, `consented_at` - both required before connecting
-- `call_recordings` (append-only): `call_id`, `storage_path`, `duration_s`, `created_at`
-> TODO: recording retention and storage location; transcription.
+- `call_recordings`: `call_id`, `storage_path`, `transcript`, `duration_s`, `created_at`, `delete_after` (created + 3 years); files removed after that, row kept with the deletion logged
+> TODO: recording storage location (Supabase Storage or object storage in Canada).
 
 ### exports (append-only)
 - `id` (export ID), `family_id`, `generated_by`, `generated_at`, `range_start`, `range_end`, `language`
@@ -185,7 +184,8 @@ no `UPDATE`/`DELETE` of content.
 - `support_schedules`: `id`, `family_id`, `payer_id`, `payee_id`, `amount_cents`, `frequency`, `start_date`, `version`; both parents accept
 
 ### subscriptions and fee_waivers
-- `subscriptions`: `user_id`, `tier` (`1 | 2 | 3`), `interval` (`month | year`), `status` (`active | lapsed`), `current_period_end`, Stripe ids
+- `subscriptions`: `user_id`, `tier` (`1 | 2 | 3`), `interval` (`month | year`), `status` (`awaiting_coparent | active | lapsed`), `current_period_end`, Stripe customer, payment method, and subscription ids; charging starts when the first family is created
+- tier 1 usage: placed call minutes per billing month (video, voice) and document storage bytes (attachments and agreement documents, never receipts)
 - `fee_waivers`: `id`, `user_id`, `reason` (`social_assistance | legal_aid | financial_hardship | safety`, nullable), `note`, `status` (`pending | approved | denied`), `decided_by`, `decided_at`, `starts_on`, `ends_on`
 
 ### activity_log (append-only)
@@ -212,8 +212,16 @@ no `UPDATE`/`DELETE` of content.
 | 2 | $17.99 | ~$179.99 |
 | 3 (top) | $24.99 | ~$249.99 |
 
-- Per parent, covering any number of families; annual about 17% off. No free trial; billing starts only when the co-parent has joined.
-- Tier contents TBD (item 30); call recording is top tier only.
+- Per parent, covering any number of families; annual about 17% off.
+| Included | Tier 1 | Tier 2 | Tier 3 |
+|---|---|---|---|
+| Messaging, tone meter, calendar, agreements, expenses, payments, verifiable exports | Yes | Yes | Yes |
+| Calls placed per month | 60 min video, 240 min voice | Unlimited | Unlimited |
+| Document storage (receipts never count) | 1 GB | Unlimited | Unlimited |
+| Certified records (affidavits) | No | Unlimited | Unlimited |
+| Call recording and transcription, kept 3 years | No | No | Yes |
+
+- No free trial. The card is collected in onboarding; the first charge is when the co-parent joins.
 - Fee waivers: honour system, owner approval, one year, tier 1 plus unlimited calling (assumption).
 - Professionals are always free. Transaction fees later.
 
@@ -239,8 +247,9 @@ no `UPDATE`/`DELETE` of content.
 
 > Resolve in the plans, then re-run `/overview`.
 
-- **Tier contents and call minutes** (30) come after calls (26, 27); calls need interim limits or none until then.
-- **Recording retention and storage**; transcription; affidavit fee and turnaround.
+- **Practitioner placeholder home** until the professional portal (28); a professional account record is needed from onboarding (31).
+- **Recording storage location**; affidavit turnaround and whether tier 1 can buy one.
+- **Fee waiver link** in the tier step arrives with 29, after onboarding ships.
 - **Tone meter** - AI provider, whether drafts are kept, whether warnings are logged.
 - **Hash chain scope** - per family or per conversation (feature 7).
 - **Two logs** - `access_log` and `activity_log` overlap; decide whether one replaces the other.
@@ -251,5 +260,5 @@ no `UPDATE`/`DELETE` of content.
 - **Expense split entry** - stored in agreement terms, but item 10 covers only calendar terms.
 - **Receiving parent not onboarded to Stripe** when an expense is approved.
 - **Family time zone** - who sets it and when.
-- **Assumptions to confirm:** attachments, children fields, access-log visibility, call event detail, professional area limits, Stripe Tax.
+- **Assumptions to confirm:** attachments, children fields, access-log visibility, call event detail, professional area limits, Stripe Tax, tier 1 minute reset and at-cap behaviour, 30-day recording deletion notice.
 - **Record retention** after account closure; launch scale; success criteria; mobile styling, tone, light/dark mode.

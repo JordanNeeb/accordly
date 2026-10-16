@@ -34,7 +34,7 @@ export function PricingTiers({
       <header className="mx-auto max-w-7xl px-6 pt-10 lg:px-8">
         <Logo onDark />
       </header>
-      <form className="group/tiers bg-gray-900 py-24 sm:py-32">
+      <form className="group/tiers bg-gray-900 pt-12 pb-24 sm:pt-16 sm:pb-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <p className="text-base/7 font-semibold text-indigo-400">{messages.eyebrow}</p>

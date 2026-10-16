@@ -25,9 +25,10 @@ Do not renumber completed features; their archived specs refer to those IDs.
 
 ### Messaging
 
-- [ ] 6. **Permanent messaging** - one undeletable, uneditable chat per family with server timestamps and attachments
-- [ ] 7. **Read receipts and tamper evidence** - first-viewed receipts and a hash chain over messages
-- [ ] 8. **Message search** - English and French keyword search with date, sender, and attachment filters
+- [ ] 6. **Subject conversations** - permanent conversations titled by the parent who starts them, in one scrollable list, with server timestamps, attachments, and no editing or deleting
+- [ ] 7. **Access log and tamper evidence** - first-viewed timestamps shown to both parents, an append-only log of sign-ins, views, and replies, and a hash chain over messages
+- [ ] 8. **Message search** - English and French keyword search across subjects and messages with date, sender, and attachment filters
+- [ ] 25. **AI tone meter** - warn about hostile wording while a parent writes and suggest a calmer rewrite, never blocking a message
 
 ### Agreements and calendar
 
@@ -42,16 +43,30 @@ Do not renumber completed features; their archived specs refer to those IDs.
 - [ ] 14. **Expense payments** - approval triggers a debit, with webhook-driven pending, paid, failed, and disputed status
 - [ ] 15. **Recurring child support** - mutually accepted schedule with automatic recurring debits
 
-### Subscriptions, exports, and notifications
+### Subscriptions
 
-- [ ] 16. **Subscriptions** - per-parent billing that starts when both parents join, with lapsed-parent restrictions
-- [ ] 17. **Court-ready export** - bilingual PDF of messages, requests, agreements, and payments with verification code
-- [ ] 18. **Email notifications** - messages, requests, approvals, and payment events
+- [ ] 16. **Tiered subscriptions** - three per-parent tiers, monthly or annual, billing that starts when both parents join, and lapsed-parent restrictions
+- [ ] 29. **Fee waivers** - honour-system request for free access, approved or denied by the owner, lasting one year
+
+### Calls
+
+- [ ] 26. **Voice and video calls** - in-app calls between co-parents through Agora, with every call logged
+- [ ] 27. **Call recording** - top-tier callers choose to record, both parents consent before the call connects, and both can play back recordings
+
+### Exports, professionals, and notifications
+
+- [ ] 17. **Court-ready export** - bilingual PDF of conversations, the access log, calls, requests, agreements, and payments, with a fingerprint and a public verification page
+- [ ] 28. **Professional portal** - free accounts for lawyers and mediators, access only by a parent's invitation, read-only areas, exports, and full logging
+- [ ] 18. **Email notifications** - messages, requests, approvals, calls, and payment events, without message text
+
+### Tier contents
+
+- [ ] 30. **Tier features** - decide and enforce what each subscription tier includes
 
 ### Mobile
 
 - [ ] 19. **Mobile foundation** - auth, shared packages, translations, and styling on the Expo app
-- [ ] 20. **Mobile messaging and push** - chat, search, and push notifications
+- [ ] 20. **Mobile messaging, calls, and push** - conversations, search, tone meter, calls, and push notifications
 - [ ] 21. **Mobile calendar and requests** - schedule, bookings, and request approvals
 - [ ] 22. **Mobile expenses and payments** - expenses, approvals, and payment status
 - [ ] 23. **Mobile subscription, export, and release** - subscription flow, PDF export, and EAS store submission

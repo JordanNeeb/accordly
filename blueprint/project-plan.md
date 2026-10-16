@@ -11,16 +11,21 @@ email, shared calendars, e-Transfers) leave no reliable record, are easy to
 dispute, and do nothing to hold either parent to what they agreed.
 
 Tango is a Canadian co-parenting app and a direct competitor to
-OurFamilyWizard. It gives co-parents one place to communicate, plan schedules,
-and handle shared expenses, with three differentiators:
+OurFamilyWizard (OFW) and TalkingParents. It gives co-parents one place to
+communicate, call, plan schedules, and handle shared expenses, with three
+differentiators:
 
-- **A permanent, court-ready record.** Messages cannot be edited or deleted,
-  are timestamped by the server, and export to a court-ready PDF.
+- **A permanent, court-ready record.** Messages and calls cannot be edited or
+  deleted, are timestamped by the server, every sign-in, view, and reply is
+  logged, and exports carry a verification code anyone can check.
 - **Agreements the app enforces.** Parents enter the terms of their parenting
   agreement, and the calendar blocks bookings that exceed those terms unless
   the other parent approves.
 - **Money that actually moves.** Shared expenses and recurring child support
   are collected through Stripe pre-authorized debit, not just tracked.
+
+It is priced roughly 20% below OurFamilyWizard, and free for low-income
+parents who ask.
 
 ## 2. Users - Who is this for?
 
@@ -31,8 +36,11 @@ and handle shared expenses, with three differentiators:
 - A parent may share children with more than one co-parent. Each co-parent
   pair plus their shared children is a separate **family**, and nothing is
   shared between families.
-- **Later (not v1):** lawyers, mediators, and family helpers invited by a
-  parent (see Deferred).
+- **Professionals (v1):** lawyers, mediators, and other family-law
+  professionals, on free accounts. They see a family only when a parent
+  invites them (see Professional portal).
+- **Later (not v1):** family helpers (calendar only) invited by a parent (see
+  Deferred).
 
 ## 3. Features - What does the MVP need?
 
@@ -50,8 +58,9 @@ and handle shared expenses, with three differentiators:
   Other providers (Apple, Facebook) later.
 - Sign-up asks for name, email and password; Google sign-up uses the name from
   Google. Parents can change their name on their profile; a name is required
-  before sending a co-parent invite. Language is chosen with an EN/FR toggle,
-  not a form field.
+  before sending a co-parent invite. Language is chosen from a language menu
+  (landing and sign-in pages) or from Settings on the dashboard, not a form
+  field.
 - Starting a family and inviting the co-parent by email is one step. The
   family is created only when the co-parent accepts, so every family has both
   parents from the start.
@@ -68,19 +77,76 @@ and handle shared expenses, with three differentiators:
 
 ### Messaging
 
-- One continuous chat per family between the two parents (no subject threads).
-- **No editing and no deleting, by anyone, ever.** Corrections are new messages.
+**Changed in this revision:** messages are organised into subject
+conversations instead of one continuous chat per family.
+
+- **Subject conversations.** A parent starts a conversation by entering a
+  subject title and the first message. Both parents reply inside it.
+- Conversations appear in **one scrollable list**, most recent activity first.
+  They are never closed, archived, hidden, or deleted.
+- **No editing and no deleting, by anyone, ever**, for messages and subjects.
+  Corrections are new messages.
 - Server-assigned timestamps, never device time.
 - Attachments: photos and PDFs, stored permanently, included in exports.
   **Assumption.**
-- Read receipts record when the recipient first viewed each message, shown to
-  the sender and included in exports. **Assumption.**
+- **First-viewed timestamps:** when a parent first opens a message, the date
+  and time are shown on that message to both parents; an unopened message shows
+  "Never viewed". Messages cannot be previewed without opening them, so lists
+  and notifications never show message text (as on TalkingParents).
+- **Access log:** every sign-in, every message view (not only the first), and
+  every reply is recorded in an append-only log. Parents do not see each other's
+  sign-ins or later views in the app; the log appears in court exports,
+  records-custodian affidavits, and the professional portal (the OFW and
+  TalkingParents model). **Assumption** (confirmed as "work with this for now").
 - Tamper evidence: each message is chained to the previous one with a
-  cryptographic hash, so any later change is detectable; exports carry a
-  verification code. **Assumption.**
-- Search: keyword search in English and French, filters by date range, sender,
-  and has-attachment, jump from a result to its place in the chat, and export a
-  date range to PDF. Smarter search (tags, summaries) is later.
+  cryptographic hash, so any later change is detectable.
+- Search: keyword search in English and French across subjects and messages,
+  filters by date range, sender, and has-attachment, jump from a result to its
+  place in the conversation, and export a date range to PDF. Smarter search
+  (tags, summaries) is later.
+
+### AI tone meter
+
+**Moved into v1 in this revision.**
+
+- While a parent writes, the tone meter flags wording likely to read as
+  hostile, aggressive, or humiliating and suggests a calmer rewrite (like OFW's
+  ToneMeter).
+- It **warns and suggests; it never blocks**. The parent can always send what
+  they wrote, and the record shows exactly what was sent.
+- Message drafts are sent to an AI provider for analysis, so that provider
+  must be in the privacy impact assessment. **TODO:** choose the provider, and
+  decide whether drafts are kept or discarded after analysis.
+- **TODO:** whether showing a warning, or accepting a rewrite, is itself
+  recorded.
+
+### Calls
+
+**New in this revision.**
+
+- In-app voice and video calls between co-parents through **Agora**, without
+  sharing phone numbers.
+- Every call is logged on every tier: who called whom, when, how long, whether
+  it was answered, and in-call events such as muting (as on OFW). **Assumption**
+  for the event detail.
+- **Recording follows the OFW model:**
+  - Only a parent on the **top tier** can record, and only calls they place.
+    They choose per call.
+  - The caller consents before dialling, and the co-parent must consent before
+    the call connects, so a co-parent can decline a recorded call.
+  - **Both parents** can play back and export every recording, whatever their
+    tier, and so can professionals the family has invited.
+  - Recordings are append-only like messages.
+- **TODO:** recording retention and storage, pending a cost check. Estimates
+  from discovery (one Max parent recording 4 hours a month): audio-only is
+  about $0.36 a month in Agora recording fees and almost nothing in storage;
+  HD video is about $1.44 a month in fees plus 2 to 4 GB of storage a month,
+  growing every year if kept permanently. OFW keeps recordings 365 days, which
+  conflicts with Tango's never-delete principle.
+- **TODO:** whether calls are transcribed (OFW Max does), and per-tier call
+  minute limits (decided with tier contents).
+- Canada is one-party consent (Criminal Code s. 184), but both parents still
+  consent to every recording, for neutrality and admissibility.
 
 ### Agreements
 
@@ -139,43 +205,121 @@ and handle shared expenses, with three differentiators:
 
 ### Court-ready export
 
-- PDF export of messages (with attachments and read receipts), calendar
-  requests and decisions, agreement versions, and expenses and payments, for a
-  chosen date range, in English or French, with the tamper-evidence
-  verification code.
-- Available to lapsed parents.
+- PDF export of conversations (with attachments and first-viewed timestamps),
+  the access log, the call log and recording references, calendar requests and
+  decisions, agreement versions, and expenses and payments, for a chosen date
+  range, in English or French.
+- **Fingerprint verification (v1):**
+  - Every export gets a unique export ID, and Tango stores who generated it,
+    when, the date range and language, the latest message hash at that moment,
+    and a SHA-256 fingerprint of the exact PDF file. This record is
+    append-only.
+  - Every page shows the export ID, a verification code, and how to verify.
+  - A public **verification page** lets anyone (lawyer, judge, clerk) upload
+    the PDF or enter the code. It answers only "matches the export generated on
+    [date] by [parent] for [range]" or "does not match", and never shows
+    message content.
+  - Because records never change, a fresh export of the same range reproduces
+    the same messages, which is the fallback check for a disputed copy.
+- Every export is recorded in the access log.
+- Available to lapsed parents and to invited professionals.
+- **Digital signatures are deferred** (see Deferred).
+
+### Court admissibility (research notes)
+
+Not legal advice; the pre-launch lawyer review confirms this.
+
+- In Canada, electronic records are governed by the Canada Evidence Act
+  ss. 30 and 31.1 to 31.8 and the provincial evidence acts. The party relying
+  on a record must prove it is what it claims to be (s. 31.1), and a printout
+  satisfies the best evidence rule when the integrity of the system that stored
+  it is shown (s. 31.2), which is presumed absent contrary evidence (s. 31.3).
+  Compliance with recognised standards supports integrity (s. 31.5).
+- The recognised standard is **CAN/CGSB-72.34-2024, Electronic records as
+  documentary evidence**. It is mostly about documented records policies and
+  controls (security, audit trails, retention, change control).
+- What Tango does for this: authenticated senders, server timestamps,
+  append-only storage, the access log, the hash chain, fingerprinted exports,
+  and a written records-management policy (a pre-launch document, not a
+  feature).
+- **Records-custodian affidavit:** like OFW's business records affidavit,
+  Tango offers a sworn statement from a named records custodian supporting the
+  authenticity and integrity of a family's record. This is an operational
+  process (custodian, template, possibly a fee), shaped by the lawyer review.
+  **TODO:** fee and turnaround.
+
+### Professional portal
+
+**Moved into v1 in this revision** (previously deferred), following the OFW
+model.
+
+- **Free** professional accounts for lawyers, mediators, and other family-law
+  professionals. Anyone can sign up and choose a professional type; there is
+  **no credential check** in v1.
+- A professional sees nothing until a **parent invites them** to a specific
+  family by name and email, and they accept.
+- Access is read-only and limited to the areas the inviting parent chooses
+  (for example messages only, or messages and expenses).
+- The other parent is notified and always sees which professionals have access.
+- Every professional action is recorded in the access log.
+- The inviting parent can revoke access at any time.
+- Professionals can generate exports and download any export either parent
+  generated, within the areas they were granted. **Assumption** for the area
+  limit.
+- Professionals can play back and export call recordings in granted areas.
 
 ### Notifications
 
-- Email notifications on web (new messages, requests, approvals, payment
-  events). Push notifications on mobile.
+- Email notifications on web (new messages, requests, approvals, calls, payment
+  events), never including message text. Push notifications on mobile.
 
 ### Deferred (not v1)
 
-- Invited users: lawyers, mediators, parenting coordinators (read-only, areas
-  chosen by the inviting parent) and family helpers (calendar only). The other
-  parent is always notified and sees who has access; every invitee action is
-  recorded; access is revocable. Design agreed, build later.
+- **United States launch.** Would need US bank debit (ACH), USD, US state
+  privacy laws (such as California's CCPA/CPRA), state call-recording consent
+  rules (about a dozen all-party states), US evidence certifications (FRE
+  902(11), 902(13), 902(14)), and new positioning.
+- **Digital signatures on exports.** Research from discovery: an Adobe-trusted
+  (AATL) document signing certificate is about US$299 a year (SSL.com);
+  SSL.com's automated eSigner plans run from $20 a month for 20 signatures
+  ($1.00 each beyond) to $250 a month for 1,000 ($0.25 each beyond);
+  pay-as-you-go pricing from Trusted Signatures is unverified and needs a
+  quote. TalkingParents signs every PDF record; OFW relies on notarised
+  affidavits. Sketch when revisited: tier 2 gets 2 signed exports a month,
+  tier 3 gets 5, professionals unlimited (with a fair-use cap ready).
+  Prefer a provider that signs a fingerprint rather than receiving the PDF.
+- **Fee-waiver proof** (version 2, only if the honour system is abused).
+- Family helpers (calendar only), invited by a parent.
+- Credential checks for professionals.
 - Customizable roles and permissions.
 - Agreement enforcement beyond the calendar (expenses, travel notice, support
   changes).
 - Rotating holiday schedules; anniversary-based allowance resets.
-- Multiple families in the UI.
 - Two-factor authentication.
-- Tone assistance for messages; smarter search.
+- Smarter search.
 - Transaction fees on payments.
-- International markets.
+- Other international markets; Spanish.
 
 ## 4. Data - What are we storing?
 
-Everything belongs to a family except the user's own profile and subscription.
+Everything belongs to a family except the user's own profile, subscription,
+fee waiver, and professional account.
 
-- **Users/profiles:** identity, name, language preference,
-  subscription status.
+- **Users/profiles:** identity, name, language preference, subscription tier
+  and status.
+- **Professional accounts:** profile, professional type; per-family access
+  grants with the granted areas, inviting parent, and revocation.
 - **Families:** members (exactly two parents in v1), time zone.
 - **Children:** name, birthdate.
-- **Messages:** append-only; sender, server timestamp, body, attachments, hash
-  chain link, first-viewed timestamp.
+- **Conversations:** subject, started by, started at; append-only.
+- **Messages:** append-only; conversation, sender, server timestamp, body,
+  attachments, hash chain link, first-viewed timestamp.
+- **Access log:** append-only events: sign-ins, message views, replies,
+  exports, professional actions, and call events.
+- **Calls:** call log (caller, callee, start, end, answered, in-call events),
+  recording consent from both parents, and recordings (append-only).
+- **Exports:** export ID, generated by, generated at, range, language, latest
+  message hash, PDF fingerprint.
 - **Agreements:** append-only versions with structured terms (schedule pattern,
   vacation allowance, expense split), attached documents, and each parent's
   acceptance or dispute.
@@ -185,42 +329,71 @@ Everything belongs to a family except the user's own profile and subscription.
   status.
 - **Payments:** Stripe connected accounts, mandates, payment intents, recurring
   support schedules, webhook-driven status history.
-- **Subscriptions:** per parent, status, period.
+- **Subscriptions:** per parent, tier, monthly or annual, status, period.
+- **Fee waivers:** request, optional reason and note, decision, decided by,
+  start and end dates.
 - **Activity history:** an append-only log of significant actions.
 
 Records are never hard-deleted. Account closure and legal retention rules are a
-**TODO** for the privacy review.
+**TODO** for the privacy review; call recording retention is a separate **TODO**
+(see Calls).
 
 ## 5. Tech - What stack are we using?
 
-- **Monorepo:** `apps/web`, `apps/mobile` (this Expo app, moved in), `supabase/`,
-  and shared packages for types, validation, data access, business rules
-  (allowance math, expense splits), and translations. **TODO:** workspace
-  tooling, decided in the monorepo feature.
+- **Monorepo:** `apps/web`, `apps/mobile`, `supabase/`, and `packages/shared`
+  (types, validation, data access, business rules such as allowance math and
+  expense splits, and translations), using npm workspaces.
 - **Web:** Next.js, TypeScript, Tailwind CSS, Tailwind Plus components.
 - **Mobile:** Expo SDK 57, React Native, Expo Router, TypeScript. **TODO:**
   styling library (NativeWind likely, so Tailwind settings carry over).
 - **Backend:** Supabase (Postgres, Auth, Storage) in `ca-central-1`. Access
-  control enforced with row-level security, scoped to family membership.
-- **Payments:** Stripe Connect with ACSS pre-authorized debit; webhooks handled
-  by the Next.js server.
+  control enforced with row-level security, scoped to family membership and
+  professional access grants.
+- **Calls:** Agora real-time voice and video, plus Agora cloud recording.
+  Published recording rates: about $1.49 per 1,000 minutes for audio and $5.99
+  per 1,000 minutes for HD video, plus Agora's per-minute call charges.
+  **TODO:** where recordings are stored (Supabase Storage or object storage in
+  Canada).
+- **AI tone meter:** **TODO:** provider and model.
+- **Payments:** Stripe Connect with ACSS pre-authorized debit; Stripe Billing
+  for tiered subscriptions in CAD; Stripe Tax for GST/HST/QST on subscriptions
+  (**Assumption**); webhooks handled by the Next.js server.
 - **Email:** transactional provider (Resend or Postmark), also used by Supabase
   Auth.
 - **Scheduled jobs:** recurring support debits, allowance resets, payment status
-  checks (Supabase cron or Vercel cron).
-- **Context files:** `AGENTS.md`, coding standards, and commands are updated for
-  Next.js and the monorepo as part of the monorepo feature.
+  checks, fee waiver expiry (Supabase cron or Vercel cron).
 
 ## 6. Monetize - How will this make money?
 
-- Per-parent subscription, monthly or yearly. One subscription covers any number
-  of families. No free trial and no free tier.
+- **Three tiers, per parent, priced about 20% below OFW:**
+
+  | Tier | Monthly | Annual |
+  |---|---|---|
+  | Tier 1 | $11.99 | $119.99 |
+  | Tier 2 | $17.99 | about $179.99 |
+  | Tier 3 (top) | $24.99 | about $249.99 |
+
+  Annual plans are about 17% below twelve monthly payments, matching tier 1.
+  For comparison, OFW's Canadian 1-year plans are $149.99 (Essentials),
+  $216.00 (Premium), and $299.88 (Max), from a third-party 2026 guide; confirm
+  before launch. Only tier 1's annual price is a full 20% below OFW.
+- **TODO:** what each tier includes, decided near the end of the build (see the
+  build plan). Known so far: call recording is top tier only.
+- One subscription covers any number of families. No free trial.
 - A parent is not charged until the co-parent has joined.
+- **Fee waivers (honour system):** a parent requests free access in the app,
+  with an optional reason (social assistance, legal aid, financial hardship,
+  safety) and note, and no proof. The owner gets an email and approves or
+  denies; each decision is logged. A waiver lasts one year and is renewed by
+  asking again. Waived parents get tier 1 plus unlimited calling (as OFW
+  does). **Assumption** for the email, duration, and what waived parents get.
+  **TODO:** approve from a minimal owner-only page or in Supabase Studio.
 - **Lapsed parents** can read everything, export the court PDF, approve or deny
-  the other parent's requests and expenses, and their pre-authorized debits keep
-  running. They cannot send messages, create bookings or requests, or enter
-  expenses; trying prompts them to renew. **A lapse never hurts the other
-  parent.**
+  the other parent's requests and expenses, play back recordings, and their
+  pre-authorized debits keep running. They cannot send messages, place calls,
+  create bookings or requests, or enter expenses; trying prompts them to renew.
+  **A lapse never hurts the other parent.**
+- Professionals are always free.
 - Transaction fees on payments later.
 - **TODO:** whether subscriptions are sold through Apple and Google in-app
   purchase or on the web (under research).
@@ -231,8 +404,9 @@ Records are never hard-deleted. Account closure and legal retention rules are a
   web; colours, logo, and branding are set manually.
 - A public landing page at `/` for signed-out visitors, aimed at parents going
   through a high-conflict separation; signed-in visitors go to the dashboard.
+  The logo always links home.
 - Screenshots for reference live in `design/references/` (reference only, never
-  shipped). **TODO:** confirm the path.
+  shipped).
 - **TODO:** tone, light/dark mode, mobile component library.
 - Accessibility follows the coding standards on both platforms.
 
@@ -245,27 +419,35 @@ Records are never hard-deleted. Account closure and legal retention rules are a
 - **Stripe:** test mode in staging, live mode in production.
 - **Mobile:** EAS Build and Submit to the App Store and Google Play.
 - **Env vars (by name, values TBD):** Supabase URL and keys, Stripe secret and
-  publishable keys, Stripe webhook secret, email provider API key.
-- Nothing is set up yet: Vercel, Supabase, Stripe, email provider, domain, and
-  Apple and Google developer accounts all need creating.
+  publishable keys, Stripe webhook secret, email provider API key, Agora app ID
+  and certificate, AI provider API key.
+- Nothing is set up yet: Vercel, Supabase staging and production, Stripe,
+  email provider, Agora, AI provider, domain, and Apple and Google developer
+  accounts all need creating.
 
 ### Pre-launch requirements (not features)
 
 - Quebec Law 25 privacy impact assessment covering every processor that handles
-  data outside Quebec (Stripe, email, push, Supabase subprocessors).
-- Privacy policy and terms of service.
+  data outside Quebec (Stripe, email, push, Agora, the AI provider, Supabase
+  subprocessors).
+- Privacy policy and terms of service, including call-recording notice and
+  consent.
+- A written records-management policy aligned with CAN/CGSB-72.34-2024.
+- A named records custodian and an affidavit template.
 - Review by a Canadian privacy lawyer and a family-law lawyer, including what
-  makes the message record admissible.
+  makes the message and call record admissible.
 
 ## 9. Usage model and constraints
 
-- Internet-facing, Canada-wide, bilingual.
+- Internet-facing, Canada-wide, bilingual. **Canada only in v1.**
 - **Users may be adversarial toward each other.** Each parent must be unable to
   read another family's data, alter shared history, or act on the other
-  parent's behalf. Enforced in the database, not only in the UI.
+  parent's behalf. Professionals see only the families and areas they were
+  granted. Enforced in the database, not only in the UI.
 - Single product, many independent families.
 - Financial data and payments are in scope; card and bank details stay with
   Stripe.
 - **Non-requirements for v1:** two-factor authentication, international
-  markets, invited third-party users.
+  markets (including the US), credential checks for professionals, digital
+  signatures on exports.
 - **TODO:** expected launch scale, success criteria.

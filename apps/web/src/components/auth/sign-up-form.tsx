@@ -4,13 +4,13 @@ import { useActionState, useRef } from "react";
 
 import { signUp } from "@/app/[lang]/(auth)/actions";
 import { useMessages } from "@/lib/i18n/language-provider";
-import { type ActionResult } from "@/lib/auth/validation";
+import { type AccountType, type ActionResult } from "@/lib/auth/validation";
 
 import { FormAlert, SubmitButton, TextField } from "./fields";
 import { GoogleSignInButton } from "./google-sign-in-button";
 import { useFocusFirstError } from "./use-focus-first-error";
 
-export function SignUpForm() {
+export function SignUpForm({ accountType }: { accountType: AccountType }) {
   const { auth } = useMessages();
   const [state, formAction] = useActionState<ActionResult, FormData>(signUp, {});
   const formRef = useRef<HTMLFormElement>(null);
@@ -22,6 +22,7 @@ export function SignUpForm() {
     <>
       <form ref={formRef} action={formAction} noValidate className="space-y-6">
         <FormAlert error={state.formError} />
+        <input type="hidden" name="type" value={accountType} />
 
         <TextField
           id="name"
@@ -58,7 +59,7 @@ export function SignUpForm() {
         />
       </form>
 
-      <GoogleSignInButton />
+      <GoogleSignInButton accountType={accountType} />
     </>
   );
 }

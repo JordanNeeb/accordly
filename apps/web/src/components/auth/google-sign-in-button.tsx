@@ -4,14 +4,15 @@ import { useActionState } from "react";
 
 import { signInWithGoogle } from "@/app/[lang]/(auth)/actions";
 import { useMessages } from "@/lib/i18n/language-provider";
-import { type ActionResult } from "@/lib/auth/validation";
+import { type AccountType, type ActionResult } from "@/lib/auth/validation";
 
 import { FormAlert } from "./fields";
 import { socialButtonClass } from "./styles";
 
 // "Or continue with" section from the Tailwind Plus sign-in component, with a
-// single full-width Google button in place of the two-column grid.
-export function GoogleSignInButton() {
+// single full-width Google button in place of the two-column grid. On the
+// sign-up page it sends the chosen account type along.
+export function GoogleSignInButton({ accountType }: { accountType?: AccountType }) {
   const { auth } = useMessages();
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(
     signInWithGoogle,
@@ -30,6 +31,7 @@ export function GoogleSignInButton() {
 
       <form action={formAction} className="mt-6 space-y-6">
         <FormAlert error={state.formError} />
+        {accountType ? <input type="hidden" name="type" value={accountType} /> : null}
         <button type="submit" disabled={pending} className={socialButtonClass}>
           <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
             <path

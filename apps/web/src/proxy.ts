@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { isLanguage } from "@tango/shared";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { isAccountType } from "@/lib/auth/validation";
 import {
   LANGUAGE_COOKIE,
   LANGUAGE_COOKIE_OPTIONS,
@@ -15,7 +16,7 @@ const SIGNED_IN_ONLY: Record<string, string> = {
   "/reset-password": "/forgot-password",
 };
 // Signed-in visitors to these pages go to their dashboard.
-const SIGNED_OUT_ONLY = ["/", "/sign-in", "/sign-up"];
+const SIGNED_OUT_ONLY = ["/", "/get-started", "/sign-in", "/sign-up"];
 
 // Route handlers that live outside `app/[lang]`.
 const UNLOCALIZED_PREFIX = "/auth/";
@@ -74,7 +75,7 @@ export async function proxy(request: NextRequest) {
     ? SIGNED_OUT_ONLY.includes(pathname)
       ? "/dashboard"
       : undefined
-    : SIGNED_IN_ONLY[pathname];
+    : (SIGNED_IN_ONLY[pathname] ?? signUpWithoutType(request));
 
   if (target) {
     const url = request.nextUrl.clone();
@@ -85,6 +86,14 @@ export async function proxy(request: NextRequest) {
 
   if (cookieLang !== lang) response.cookies.set(LANGUAGE_COOKIE, lang, LANGUAGE_COOKIE_OPTIONS);
   return response;
+}
+
+// Sign-up needs the account type chosen on /get-started.
+function signUpWithoutType(request: NextRequest): string | undefined {
+  const { pathname, searchParams } = request.nextUrl;
+  return pathname === "/sign-up" && !isAccountType(searchParams.get("type"))
+    ? "/get-started"
+    : undefined;
 }
 
 export const config = {

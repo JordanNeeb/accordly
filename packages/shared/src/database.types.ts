@@ -65,14 +65,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "created_at": string,"id": string,"language": string,"name": string | null
+                    "account_type": string | null,"created_at": string,"id": string,"language": string,"name": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"id": string,"language"?: string,"name"?: string | null
+                    "account_type"?: string | null,"created_at"?: string,"id": string,"language"?: string,"name"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"id"?: string,"language"?: string,"name"?: string | null
+                    "account_type"?: string | null,"created_at"?: string,"id"?: string,"language"?: string,"name"?: string | null
                   }
                   Relationships: [
                     
@@ -83,7 +83,9 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            [_ in never]: never
+            "set_account_type":
+{ Args: { "requested": string }; Returns: undefined
+                           }
           }
           Enums: {
             [_ in never]: never

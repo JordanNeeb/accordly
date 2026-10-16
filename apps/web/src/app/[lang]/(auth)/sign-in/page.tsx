@@ -59,7 +59,7 @@ export default async function SignInPage({
       footer={
         <>
           {auth.signIn.noAccount}{" "}
-          <Link href="/sign-up" className={linkClass}>
+          <Link href="/get-started" className={linkClass}>
             {auth.signIn.createAccount}
           </Link>
         </>

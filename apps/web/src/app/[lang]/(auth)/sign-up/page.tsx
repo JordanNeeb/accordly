@@ -1,9 +1,12 @@
 import { type Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 import { linkClass } from "@/components/auth/styles";
+import { isAccountType } from "@/lib/auth/validation";
 import { pageMessages } from "@/lib/i18n/server";
 
 export async function generateMetadata({
@@ -13,7 +16,22 @@ export async function generateMetadata({
   return { title: auth.signUp.submit };
 }
 
-export default async function SignUpPage({ params }: PageProps<"/[lang]/sign-up">) {
+// The proxy already sends visitors without a valid type to /get-started; this
+// is the page's own check.
+async function SignUpWithType({
+  searchParams,
+}: {
+  searchParams: PageProps<"/[lang]/sign-up">["searchParams"];
+}) {
+  const { type } = await searchParams;
+  if (!isAccountType(type)) redirect("/get-started");
+  return <SignUpForm accountType={type} />;
+}
+
+export default async function SignUpPage({
+  params,
+  searchParams,
+}: PageProps<"/[lang]/sign-up">) {
   const { auth } = await pageMessages(params);
   return (
     <AuthCard
@@ -27,7 +45,9 @@ export default async function SignUpPage({ params }: PageProps<"/[lang]/sign-up"
         </>
       }
     >
-      <SignUpForm />
+      <Suspense fallback={null}>
+        <SignUpWithType searchParams={searchParams} />
+      </Suspense>
     </AuthCard>
   );
 }

@@ -129,6 +129,25 @@ export const en = {
     learnMore: 'Learn more',
     screenshotAlt: 'App screenshot',
   },
+  onboarding: {
+    accountType: {
+      title: 'What best describes you?',
+      description:
+        "Choose the option that fits you. We'll set up Tango for the way you'll use it.",
+      parent: {
+        label: 'Parent',
+        description:
+          "You're raising children with a co-parent after a separation. Message your co-parent, follow your parenting schedule, and share expenses and child support, with records ready for court.",
+        action: 'Continue as a parent',
+      },
+      professional: {
+        label: 'Professional',
+        description:
+          'You support families through separation: lawyers, mediators, therapists, and parenting coordinators. Parents invite you to see the records they choose to share. Always free.',
+        action: 'Continue as a professional',
+      },
+    },
+  },
 } as const;
 
 type Widen<T> = { [K in keyof T]: T[K] extends string ? string : Widen<T[K]> };

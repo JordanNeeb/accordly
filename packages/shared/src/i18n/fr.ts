@@ -126,4 +126,23 @@ export const fr: Messages = {
     learnMore: 'En savoir plus',
     screenshotAlt: "Capture d'écran de l'application",
   },
+  onboarding: {
+    accountType: {
+      title: "Qu'est-ce qui vous décrit le mieux?",
+      description:
+        "Choisissez l'option qui vous correspond. Nous adapterons Tango à votre façon de l'utiliser.",
+      parent: {
+        label: 'Parent',
+        description:
+          'Vous élevez vos enfants avec un coparent après une séparation. Écrivez à votre coparent, suivez votre horaire parental et partagez les dépenses et la pension alimentaire, avec des dossiers prêts pour le tribunal.',
+        action: 'Continuer comme parent',
+      },
+      professional: {
+        label: 'Professionnel',
+        description:
+          "Vous accompagnez des familles qui se séparent : avocats, médiateurs, thérapeutes et coordonnateurs parentaux. Les parents vous invitent à consulter les dossiers qu'ils choisissent de partager. Toujours gratuit.",
+        action: 'Continuer comme professionnel',
+      },
+    },
+  },
 };

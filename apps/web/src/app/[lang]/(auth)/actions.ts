@@ -2,13 +2,15 @@
 
 import { type AuthError } from "@supabase/supabase-js";
 import { type Messages } from "@tango/shared";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
+  ACCOUNT_TYPE_COOKIE,
   type ActionResult,
   type FieldErrors,
   hasErrors,
+  isAccountType,
   readText,
   validateEmail,
   validateName,
@@ -43,6 +45,11 @@ export async function signUp(
   formData: FormData,
 ): Promise<ActionResult> {
   const { auth } = await requestMessages();
+  const accountType = formData.get("type");
+  if (!isAccountType(accountType)) {
+    console.error("[auth] signUp without a valid account type");
+    return { formError: auth.errors.unexpected };
+  }
   const { name, error: nameError } = validateName(
     readText(formData, "name"),
     auth.errors.nameLength,
@@ -58,11 +65,14 @@ export async function signUp(
   if (hasErrors(fieldErrors)) return { fieldErrors, values };
 
   const supabase = await createClient();
-  // The sign-up trigger copies the name and language into the new profile.
+  // The sign-up trigger copies the name, language, and account type into the
+  // new profile.
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { name, language: await requestLanguage() } },
+    options: {
+      data: { name, language: await requestLanguage(), account_type: accountType },
+    },
   });
 
   if (error) {
@@ -120,11 +130,27 @@ export async function signIn(
 
 // Starts Google's OAuth flow (PKCE; the code verifier is stored in a cookie).
 // Google returns to /auth/callback on this origin; Supabase's redirect
-// allow-list still applies, and nothing from the form shapes the URL.
-export async function signInWithGoogle(): Promise<ActionResult> {
+// allow-list still applies, and nothing from the form shapes the URL. From the
+// sign-up page the form also carries the account type, kept in a cookie for
+// the callback.
+export async function signInWithGoogle(
+  _previous: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
   const { auth } = await requestMessages();
   const origin = (await headers()).get("origin");
   if (!origin) return { formError: auth.errors.googleFailed };
+
+  const accountType = formData.get("type");
+  if (isAccountType(accountType)) {
+    (await cookies()).set(ACCOUNT_TYPE_COOKIE, accountType, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/auth/callback",
+      maxAge: 600,
+    });
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({

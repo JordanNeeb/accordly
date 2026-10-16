@@ -18,6 +18,18 @@ export type ActionResult = {
   values?: { name?: string; email?: string };
 };
 
+export const ACCOUNT_TYPES = ["parent", "professional"] as const;
+
+export type AccountType = (typeof ACCOUNT_TYPES)[number];
+
+export function isAccountType(value: unknown): value is AccountType {
+  return (ACCOUNT_TYPES as readonly unknown[]).includes(value);
+}
+
+// Holds the account type chosen before a Google sign-up until /auth/callback
+// can save it, because Google can't carry sign-up metadata.
+export const ACCOUNT_TYPE_COOKIE = "tango_account_type";
+
 export function readText(formData: FormData, name: string): string {
   const value = formData.get(name);
   return typeof value === "string" ? value : "";

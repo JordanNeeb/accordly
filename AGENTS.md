@@ -24,7 +24,7 @@ An npm workspaces monorepo:
 - `apps/mobile` - Expo (React Native, Expo Router), iOS and Android, built last
 - `packages/shared` - `@tango/shared`, code shared by both apps
 - `supabase/` - Supabase config, migrations, and policies (backend)
-- `design/references/` - design screenshots, reference only
+- `design/references/` - design references, including the Tailwind Plus Catalyst UI kit every UI element is built from (reference only; copy components into the app)
 - `design/brand/` - brand source artwork (logos, icon art)
 
 The Blueprint files (`AGENTS.md`, `CLAUDE.md`, `.agents/`, `.claude/`,

@@ -115,10 +115,19 @@ Web data access (`apps/web`):
 ## Web styling
 
 - Tailwind CSS v4 for all styling (CSS-first config in `src/app/globals.css`)
-- Use Tailwind Plus components where one fits; colours, logo, and branding are
-  set by the project owner
+- Build every UI element from the **Catalyst UI kit** in
+  `design/references/tailwind-plus/catalyst-ui-kit/` (TypeScript version).
+  Copy a component into `src/components/catalyst/` the first time a feature
+  needs it, keeping it as close to the kit as possible (wire its `Link` to
+  `next/link` as the kit's docs describe), and install its dependencies
+  (`motion`, `clsx`) with that first copy. Never import from `design/`.
+- When Catalyst has no fitting component, use the closest Tailwind Plus
+  reference in `design/references/tailwind-plus/` and say so in the spec.
+  Colours, logo, and branding are set by the project owner
+- Screens built before the kit was added move to Catalyst as separate work,
+  not inside an unrelated feature
 - No inline styles
-- Design screenshots live in `design/references/`; check them before building UI
+- Design references live in `design/references/`; check them before building UI
 
 # Mobile (`apps/mobile`)
 

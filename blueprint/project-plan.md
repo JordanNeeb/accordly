@@ -343,7 +343,8 @@ Records are never hard-deleted. Account closure and legal retention rules are a
 - **Monorepo:** `apps/web`, `apps/mobile`, `supabase/`, and `packages/shared`
   (types, validation, data access, business rules such as allowance math and
   expense splits, and translations), using npm workspaces.
-- **Web:** Next.js, TypeScript, Tailwind CSS, Tailwind Plus components.
+- **Web:** Next.js, TypeScript, Tailwind CSS, and the Tailwind Plus Catalyst
+  UI kit for every UI element.
 - **Mobile:** Expo SDK 57, React Native, Expo Router, TypeScript. **TODO:**
   styling library (NativeWind likely, so Tailwind settings carry over).
 - **Backend:** Supabase (Postgres, Auth, Storage) in `ca-central-1`. Access
@@ -400,8 +401,10 @@ Records are never hard-deleted. Account closure and legal retention rules are a
 
 ## 7. UI/UX - How should this look and feel?
 
-- Design is owned by the project owner. Components come from Tailwind Plus on
-  web; colours, logo, and branding are set manually.
+- Design is owned by the project owner. Every UI element comes from the
+  Tailwind Plus **Catalyst UI kit** (`design/references/tailwind-plus/catalyst-ui-kit/`);
+  other Tailwind Plus references are used only where Catalyst has no fitting
+  component. Colours, logo, and branding are set manually.
 - A public landing page at `/` for signed-out visitors, aimed at parents going
   through a high-conflict separation; signed-in visitors go to the dashboard.
   The logo always links home.

@@ -1,6 +1,6 @@
 # Tango - Project Overview
 
-<!-- blueprint:source-hash 262dd55dbeb6b4f6f24f6c568b79ad33f46e6d6e124d4e7b7ea630f70afd18b8 -->
+<!-- blueprint:source-hash b0f725804609c704aadb6b881727684ed3126705f51cb70f156322753f650abd -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready record of messages and calls,
@@ -194,7 +194,7 @@ no `UPDATE`/`DELETE` of content.
 ## Tech stack
 
 - **Monorepo** - npm workspaces; `packages/shared` holds types, validation, business rules, and translations.
-- **Next.js + TypeScript + Tailwind CSS + Tailwind Plus** - web, the full v1 client; hosts Stripe webhooks.
+- **Next.js + TypeScript + Tailwind CSS + Catalyst UI kit** - web, the full v1 client; hosts Stripe webhooks.
 - **Expo SDK 57 + React Native + Expo Router** - mobile, built last. Styling TODO (NativeWind likely).
 - **Supabase** (`ca-central-1`) - Postgres, Auth, Storage, RLS.
 - **Agora** - voice and video calls and cloud recording (about $1.49 per 1,000 audio minutes, $5.99 per 1,000 HD video minutes, plus call minutes).
@@ -219,7 +219,7 @@ no `UPDATE`/`DELETE` of content.
 
 ## UI/UX
 
-- Design owned by the project owner: Tailwind Plus on web; colours, logo, and branding set manually; references in `design/references/`.
+- Design owned by the project owner: every UI element from the Tailwind Plus Catalyst UI kit (`design/references/tailwind-plus/catalyst-ui-kit/`), other Tailwind Plus references only where Catalyst has no fit; colours, logo, and branding set manually.
 - All UI, emails, notifications, and exports in English and French. Language menu on landing and auth pages; Settings > Language on the dashboard.
 - `/` landing (signed out), `/dashboard` (signed in); the logo always links home.
 - Main web screens (routes decided in feature specs): family setup and invite, children, conversations with search and tone meter, calls, calendar with requests, agreements, expenses, payments, support schedule, subscription and fee waiver, export, verification page, professional portal.

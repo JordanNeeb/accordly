@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { pageMessages } from "@/lib/i18n/server";
+import { ParentDashboard } from "@/components/dashboard/parent-dashboard";
+import { ProfessionalDashboard } from "@/components/dashboard/professional-dashboard";
+import { pageMessages, requestMessages } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata({
@@ -13,9 +15,10 @@ export async function generateMetadata({
   return { title: dashboard.title };
 }
 
-// Shows the parent's name, falling back to their email when no name is saved
-// or the profile can't be read. The name is non-essential, so a failed read is
-// logged rather than shown.
+// Shows the user's name, falling back to their email when no name is saved or
+// the profile can't be read. Professionals get the professional dashboard;
+// parents and accounts without a type get the parent dashboard. A failed read
+// shows an error in the bare shell rather than guessing which one to show.
 async function Dashboard() {
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
@@ -24,22 +27,35 @@ async function Dashboard() {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("name")
+    .select("name, account_type")
     .eq("id", claims.sub)
     .single();
 
+  const userName = profile?.name?.trim() || (claims.email ?? "");
+
   if (error) {
     console.error("[dashboard] profile load failed", { code: error.code, message: error.message });
+    const { auth } = await requestMessages();
+    return (
+      <DashboardShell userName={userName} navigation={[]}>
+        <p className="rounded-md bg-red-50 p-4 text-sm text-red-800 dark:bg-red-500/15 dark:text-red-300">
+          {auth.errors.unexpected}
+        </p>
+      </DashboardShell>
+    );
   }
 
-  const name = profile?.name?.trim();
-
-  return <DashboardShell userName={name || (claims.email ?? "")} />;
+  return profile.account_type === "professional" ? (
+    <ProfessionalDashboard userName={userName} />
+  ) : (
+    <ParentDashboard userName={userName} />
+  );
 }
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<DashboardShell userName="" />}>
+    // The fallback is the bare shell, since the dashboard type isn't known yet.
+    <Suspense fallback={<DashboardShell userName="" navigation={[]} />}>
       <Dashboard />
     </Suspense>
   );

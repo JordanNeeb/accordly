@@ -113,6 +113,12 @@ export const fr: Messages = {
     openUserMenu: 'Ouvrir le menu utilisateur',
     yourProfile: 'Votre profil',
     signOut: 'Se déconnecter',
+    professional: {
+      welcome: 'Bienvenue, {name}',
+      emptyTitle: "Aucune famille pour l'instant",
+      emptyDescription:
+        "Lorsqu'un parent vous invite dans sa famille, elle apparaît ici. Vous ne verrez que les dossiers qu'il choisit de partager.",
+    },
   },
   landing: {
     nav: {

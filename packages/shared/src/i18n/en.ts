@@ -114,6 +114,12 @@ export const en = {
     openUserMenu: 'Open user menu',
     yourProfile: 'Your profile',
     signOut: 'Sign out',
+    professional: {
+      welcome: 'Welcome, {name}',
+      emptyTitle: 'No families yet',
+      emptyDescription:
+        "When a parent invites you to their family, it appears here. You'll only see the records they choose to share.",
+    },
   },
   // "Learn more" and the screenshot text are Tailwind Plus placeholders, kept
   // until real content exists.

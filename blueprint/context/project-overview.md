@@ -1,6 +1,6 @@
 # Tango - Project Overview
 
-<!-- blueprint:source-hash 1d879fcc0cb38384bc47c017f10576b31564ac7154b21809a27e361f25ebf37f -->
+<!-- blueprint:source-hash 42194ff0a3591f9adbdc81f387ae69becc6dc114bd50e9442250cce6c6fe3fed -->
 
 > A Canadian, bilingual co-parenting app (web first, then iOS and Android) that
 > gives separated parents a permanent court-ready record of messages and calls,
@@ -50,12 +50,11 @@ low-income parents who ask.
 - Admissibility target: Canada Evidence Act ss. 30, 31.1-31.8 and provincial
   acts; records practices aligned with CAN/CGSB-72.34-2024.
 - **Non-requirements for v1:** two-factor auth, international markets
-  (including the US), professional credential checks, digital signatures on
-  exports, transaction fees.
+  (including the US), professional credential checks, transaction fees.
 
 ## Features
 
-In build-plan order. Headline differentiators: **6-7, 17** (permanent,
+In build-plan order. Headline differentiators: **6-7, 32, 17** (permanent,
 verifiable record), **10-11** (agreement enforcement), **13-15** (real payments).
 
 **Foundation** (done)
@@ -95,7 +94,10 @@ verifiable record), **10-11** (agreement enforcement), **13-15** (real payments)
 27. **Call recording** - tier 3 caller opts in per call; both consent before connecting; transcribed; both parents (and granted professionals) can play back; files kept 3 years.
 
 **Exports, professionals, notifications**
-17. **Court-ready export** - EN/FR PDF of conversations, access log, calls, requests, agreements, payments; fingerprint and public verification page.
+32. **Signed exports** - Adobe-trusted (AATL) OV organization seal applied by a Supabase Edge Function; the private key never leaves Azure Key Vault.
+    - 32a. **Signing key and certificate** - setup guide and check script: RSA key generated in Key Vault (Premium or Managed HSM, FIPS 140-2 L2+) with key attestation; SSL.com OV document signing certificate; issued chain imported into the vault.
+    - 32b. **Signing function** - hashes the PDF's signed byte range (SHA-256), signs only the hash in Key Vault via a service principal from Supabase secrets, embeds signature, chain, SSL.com trusted timestamp, and revocation data (LTV) so Acrobat Reader shows a valid seal.
+17. **Court-ready export** - EN/FR PDF of conversations, access log, calls, requests, agreements, payments; sealed by 32 and delivered to web and mobile. Replaces the earlier verification-code and public verification page plan.
 28. **Professional portal** - free accounts, parent invitation per family, granted areas, exports, full logging, revocable.
 18. **Email notifications** - messages, requests, approvals, calls, payments; never message text.
 
@@ -155,8 +157,8 @@ no `UPDATE`/`DELETE` of content.
 
 ### exports (append-only)
 - `id` (export ID), `family_id`, `generated_by`, `generated_at`, `range_start`, `range_end`, `language`
-- `areas` (text[]), `latest_message_hash`, `pdf_sha256`, `verification_code`
-- the verification page returns match/no-match and this metadata only, never content
+- `areas` (text[]), `latest_message_hash`, `pdf_sha256` (of the final signed PDF)
+- internal audit record; anyone checks a copy through the PDF's digital seal, not a Tango page
 
 ### professional_accounts and professional_grants
 - `professional_accounts`: `user_id`, `name`, `professional_type` (`lawyer | mediator | other`), `created_at`
@@ -201,6 +203,7 @@ no `UPDATE`/`DELETE` of content.
 - **AI provider** - tone meter. TODO: provider and model.
 - **Stripe** - Connect + ACSS PAD for expenses and support; Billing for tiered subscriptions in CAD; Tax for GST/HST/QST (assumption).
 - **Resend or Postmark** - transactional and Supabase Auth email.
+- **Export signing** - Supabase Edge Function (Deno, TypeScript); RSA key in Azure Key Vault (Premium or Managed HSM); SSL.com OV AATL document signing certificate (~US$299/year, no per-signature fees).
 - **Supabase cron or Vercel cron** - support debits, allowance resets, payment status checks, fee waiver expiry.
 - **Expo push** - mobile notifications.
 
@@ -215,7 +218,7 @@ no `UPDATE`/`DELETE` of content.
 - Per parent, covering any number of families; annual about 17% off.
 | Included | Tier 1 | Tier 2 | Tier 3 |
 |---|---|---|---|
-| Messaging, tone meter, calendar, agreements, expenses, payments, verifiable exports | Yes | Yes | Yes |
+| Messaging, tone meter, calendar, agreements, expenses, payments, signed PDF exports | Yes | Yes | Yes |
 | Calls placed per month | 60 min video, 240 min voice | Unlimited | Unlimited |
 | Document storage (receipts never count) | 1 GB | Unlimited | Unlimited |
 | Certified records (affidavits) | No | Unlimited | Unlimited |
@@ -230,15 +233,15 @@ no `UPDATE`/`DELETE` of content.
 - Design owned by the project owner: every UI element from the Tailwind Plus Catalyst UI kit (`design/references/tailwind-plus/catalyst-ui-kit/`), other Tailwind Plus references only where Catalyst has no fit; colours, logo, and branding set manually.
 - All UI, emails, notifications, and exports in English and French. Language menu on landing and auth pages; Settings > Language on the dashboard.
 - `/` landing (signed out), `/dashboard` (signed in); the logo always links home.
-- Main web screens (routes decided in feature specs): family setup and invite, children, conversations with search and tone meter, calls, calendar with requests, agreements, expenses, payments, support schedule, subscription and fee waiver, export, verification page, professional portal.
+- Main web screens (routes decided in feature specs): family setup and invite, children, conversations with search and tone meter, calls, calendar with requests, agreements, expenses, payments, support schedule, subscription and fee waiver, export, professional portal.
 
 ## Deployment
 
 - **Web:** Vercel; functions pinned to the nearest Canadian or US-East region (verify in `/release`).
 - **Backend:** Supabase `ca-central-1`; staging and production; Supabase CLI locally.
 - **Stripe:** test mode in staging, live in production. **Mobile:** EAS Build and Submit.
-- **Env vars:** Supabase URL and keys, Stripe secret, publishable, and webhook keys, email provider key, Agora app ID and certificate, AI provider key.
-- Nothing provisioned yet (Vercel, Supabase staging and production, Stripe, email, Agora, AI provider, domain, Apple and Google developer accounts).
+- **Env vars:** Supabase URL and keys, Stripe secret, publishable, and webhook keys, email provider key, Agora app ID and certificate, AI provider key, Azure service principal (tenant ID, client ID, client secret), Key Vault URL and key name.
+- Nothing provisioned yet (Vercel, Supabase staging and production, Stripe, email, Agora, AI provider, Azure Key Vault, SSL.com certificate with organization vetting, domain, Apple and Google developer accounts).
 - **Pre-launch (not features):** Law 25 privacy impact assessment (Stripe, email, push, Agora, AI provider, Supabase subprocessors); privacy policy and terms with recording consent; CGSB-aligned records-management policy; named records custodian and affidavit template; privacy and family-law lawyer review.
 
 > TODO: build/start commands and health path (`/release`).

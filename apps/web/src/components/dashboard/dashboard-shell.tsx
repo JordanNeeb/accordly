@@ -11,20 +11,9 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import {
-  Bars3Icon,
-  BellIcon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { type Messages } from "@tango/shared";
+import { Bars3Icon, BellIcon, type HomeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { signOut } from "@/app/[lang]/(auth)/actions";
 import { Logo } from "@/components/common/logo";
@@ -35,34 +24,20 @@ import { SettingsMenu } from "./settings-menu";
 // Ported from the dark Tailwind Plus application shell
 // (design/references/tailwind-plus/application/dashboard-dark.jsx). It is always
 // dark until a dark-mode toggle exists; dashboard-light.jsx is kept for that.
-// Navigation,
-// teams, search, and notifications are the reference's placeholders; only the
-// logo, the parent's name, Settings (language), Your profile, and Sign out are
-// wired up.
+// The shell holds what every dashboard shares: the logo, search and
+// notifications (still the reference's placeholders), the user's name,
+// Settings (language), Your profile, and Sign out. Each dashboard passes its
+// own sidebar navigation, optional teams, and content.
 
-function navigationItems(dashboard: Messages["dashboard"]) {
-  return [
-    { name: dashboard.navigation.dashboard, href: "#", icon: HomeIcon, current: true },
-    { name: dashboard.navigation.team, href: "#", icon: UsersIcon, current: false },
-    { name: dashboard.navigation.projects, href: "#", icon: FolderIcon, current: false },
-    { name: dashboard.navigation.calendar, href: "#", icon: CalendarIcon, current: false },
-    {
-      name: dashboard.navigation.documents,
-      href: "#",
-      icon: DocumentDuplicateIcon,
-      current: false,
-    },
-    { name: dashboard.navigation.reports, href: "#", icon: ChartPieIcon, current: false },
-  ];
-}
+export type NavigationItem = {
+  name: string;
+  href: string;
+  // Any Heroicons outline icon; they all share this type.
+  icon: typeof HomeIcon;
+  current: boolean;
+};
 
-function teamItems(dashboard: Messages["dashboard"]) {
-  return [
-    { id: 1, name: dashboard.teams.heroicons, href: "#", initial: "H", current: false },
-    { id: 2, name: dashboard.teams.tailwindLabs, href: "#", initial: "T", current: false },
-    { id: 3, name: dashboard.teams.workcation, href: "#", initial: "W", current: false },
-  ];
-}
+export type TeamItem = { id: number; name: string; href: string; initial: string; current: boolean };
 
 const SIGN_OUT_FORM_ID = "dashboard-sign-out";
 
@@ -71,7 +46,15 @@ function classNames(...classes: (string | false | undefined)[]) {
 }
 
 // The sidebar contents, shared by the mobile dialog and the desktop column.
-function Sidebar({ className }: { className: string }) {
+function Sidebar({
+  className,
+  navigation,
+  teams,
+}: {
+  className: string;
+  navigation: NavigationItem[];
+  teams?: TeamItem[];
+}) {
   const { dashboard } = useMessages();
   return (
     <div className={className}>
@@ -82,7 +65,7 @@ function Sidebar({ className }: { className: string }) {
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
             <ul role="list" className="-mx-2 space-y-1">
-              {navigationItems(dashboard).map((item) => (
+              {navigation.map((item) => (
                 <li key={item.name}>
                   <a
                     href={item.href}
@@ -101,31 +84,33 @@ function Sidebar({ className }: { className: string }) {
               ))}
             </ul>
           </li>
-          <li>
-            <div className="text-xs/6 font-semibold text-gray-400">
-              {dashboard.teamsHeading}
-            </div>
-            <ul role="list" className="-mx-2 mt-2 space-y-1">
-              {teamItems(dashboard).map((team) => (
-                <li key={team.id}>
-                  <a
-                    href={team.href}
-                    className={classNames(
-                      team.current
-                        ? "bg-white/5 text-white"
-                        : "text-gray-400 hover:bg-white/5 hover:text-white",
-                      "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                    )}
-                  >
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[0.625rem] font-medium text-gray-400 group-hover:border-white/20 group-hover:text-white">
-                      {team.initial}
-                    </span>
-                    <span className="truncate">{team.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </li>
+          {teams ? (
+            <li>
+              <div className="text-xs/6 font-semibold text-gray-400">
+                {dashboard.teamsHeading}
+              </div>
+              <ul role="list" className="-mx-2 mt-2 space-y-1">
+                {teams.map((team) => (
+                  <li key={team.id}>
+                    <a
+                      href={team.href}
+                      className={classNames(
+                        team.current
+                          ? "bg-white/5 text-white"
+                          : "text-gray-400 hover:bg-white/5 hover:text-white",
+                        "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
+                      )}
+                    >
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[0.625rem] font-medium text-gray-400 group-hover:border-white/20 group-hover:text-white">
+                        {team.initial}
+                      </span>
+                      <span className="truncate">{team.name}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ) : null}
           <li className="mt-auto">
             <SettingsMenu />
           </li>
@@ -135,7 +120,17 @@ function Sidebar({ className }: { className: string }) {
   );
 }
 
-export function DashboardShell({ userName }: { userName: string }) {
+export function DashboardShell({
+  userName,
+  navigation,
+  teams,
+  children,
+}: {
+  userName: string;
+  navigation: NavigationItem[];
+  teams?: TeamItem[];
+  children?: ReactNode;
+}) {
   const { dashboard } = useMessages();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -168,14 +163,22 @@ export function DashboardShell({ userName }: { userName: string }) {
               </div>
             </TransitionChild>
 
-            <Sidebar className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10 before:pointer-events-none before:absolute before:inset-0 before:bg-black/10" />
+            <Sidebar
+              navigation={navigation}
+              teams={teams}
+              className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10 before:pointer-events-none before:absolute before:inset-0 before:bg-black/10"
+            />
           </DialogPanel>
         </div>
       </Dialog>
 
       {/* Static sidebar for desktop */}
       <div className="hidden bg-gray-900 ring-1 ring-white/10 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <Sidebar className="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 pb-4" />
+        <Sidebar
+          navigation={navigation}
+          teams={teams}
+          className="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 pb-4"
+        />
       </div>
 
       <div className="lg:pl-72">
@@ -268,7 +271,7 @@ export function DashboardShell({ userName }: { userName: string }) {
 
         <main className="py-10">
           <h1 className="sr-only">{dashboard.title}</h1>
-          <div className="px-4 sm:px-6 lg:px-8">{/* Dashboard content comes in later features. */}</div>
+          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
     </div>

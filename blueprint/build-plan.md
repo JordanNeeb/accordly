@@ -21,9 +21,9 @@ Do not renumber completed features; their archived specs refer to those IDs.
 
 ### Onboarding
 
-- [ ] 31. **Onboarding flow** - choose family or practitioner, then a step-by-step flow into the existing sign-up; practitioners land on a placeholder home until the portal exists
+- [x] 31. **Onboarding flow** - choose family or practitioner, then a step-by-step flow into the existing sign-up; practitioners land on a placeholder home until the portal exists
   - [x] 31a. **Account type choice** - "What best describes you?" screen after Get started; parents continue to pricing, professionals to sign-up, and the account type is saved on the profile
-  - [ ] 31b. **Professional home** - a professional account record and a placeholder home for professionals until the portal exists
+  - [x] 31b. **Professional home** - a professional account record and a placeholder home for professionals until the portal exists
 - [ ] 16. **Tiered subscriptions** - tier selection screen in onboarding, Stripe Billing in CAD, card collected at sign-up, charging from when the co-parent joins, and lapsed-parent restrictions
   - [x] 16a. **Pricing page** - Basic, Standard, and Premium tiers with a monthly or annual switch on /pricing; choosing one continues to parent sign-up
   - [ ] 16b. **Payment method** - Stripe Billing in CAD, card collected after sign-up
@@ -61,7 +61,10 @@ Do not renumber completed features; their archived specs refer to those IDs.
 
 ### Exports, professionals, and notifications
 
-- [ ] 17. **Court-ready export** - bilingual PDF of conversations, the access log, calls, requests, agreements, and payments, with a fingerprint and a public verification page
+- [ ] 32. **Signed exports** - an Adobe-trusted (AATL) organization seal applied by a Supabase Edge Function, with the private key held in Azure Key Vault and never leaving it
+  - [ ] 32a. **Signing key and certificate** - setup guide and check script: RSA key created in Azure Key Vault (Premium or Managed HSM) with its key attestation, SSL.com OV document signing certificate, and the issued chain imported back into the vault
+  - [ ] 32b. **Signing function** - Edge Function that hashes a PDF's byte range, signs the hash with Key Vault using a service principal from Supabase secrets, and embeds the signature, certificate chain, trusted timestamp, and revocation data so Acrobat Reader shows a valid seal
+- [ ] 17. **Court-ready export** - bilingual PDF of conversations, the access log, calls, requests, agreements, and payments, sealed by feature 32 and delivered to web and mobile
 - [ ] 28. **Professional portal** - free accounts for lawyers and mediators, access only by a parent's invitation, read-only areas, exports, and full logging
 - [ ] 18. **Email notifications** - messages, requests, approvals, calls, and payment events, without message text
 
